@@ -26,5 +26,6 @@ jobs:
         make lint
     - name: Test
       run: |
+        mkdir tmp
         go test -coverprofile="c.out"
         go tool cover -func="c.out"

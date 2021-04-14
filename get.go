@@ -15,21 +15,27 @@ import (
 	"github.com/gorilla/mux"
 )
 
+// Hello is a simple hello function
 func Hello(w http.ResponseWriter, _ *http.Request) {
 
 	fmt.Fprintf(w, "hello\n")
 }
 
-func GetJson(w http.ResponseWriter, req *http.Request) {
+// GetJSON Return random rows of JSON
+func GetJSON(w http.ResponseWriter, req *http.Request) {
 	if !CheckMethod("GET", req) {
 		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
 	}
 	vars := mux.Vars(req)
 	var rowCount int
-	if vars["row"] == "" {
-		rowCount = rand.Intn(row_count)
+	var err error
+	if vars["rows"] == "" {
+		rowCount = rand.Intn(defaultRowCount)
 	} else {
-		rowCount, _ = strconv.Atoi(vars["row"])
+		rowCount, err = strconv.Atoi(vars["rows"])
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+		}
 	}
 	garbage, err := Faker.JSON(&gofakeit.JSONOptions{
 		Type:     "array",
@@ -50,6 +56,7 @@ func GetJson(w http.ResponseWriter, req *http.Request) {
 	fmt.Fprint(w, string(garbage))
 }
 
+// downloadImage downs an image from the URL and encodes to PNG if needed
 func downloadImage(url string, format string) ([]byte, error) {
 	resp, err := http.Get(url)
 	if err != nil {
@@ -88,8 +95,9 @@ func isvalidformat(format string) bool {
 	return false
 }
 
-func GeneratorImageURL(vars map[string]string) string {
-	size_options := [7][2]string{
+// GenerateImageURL makes a valid image URL if one is not given
+func GenerateImageURL(vars map[string]string) string {
+	sizeOptions := [7][2]string{
 		{"16", "16"},
 		{"32", "32"},
 		{"64", "64"},
@@ -102,22 +110,21 @@ func GeneratorImageURL(vars map[string]string) string {
 		if vars["height"] == "" {
 			s := rand.NewSource(time.Now().Unix())
 			r := rand.New(s)
-			randomIndex := r.Intn(len(size_options))
-			pick := size_options[randomIndex]
-			return fmt.Sprint(base_image_url, fmt.Sprintf("%s/%s.jpg", pick[0], pick[1]))
-		} else {
-			if isvalidformat(vars["type"]) {
-				return fmt.Sprint(base_image_url, fmt.Sprintf("%s.jpg", vars["height"]))
-			} else {
-				return fmt.Sprint(base_image_url, fmt.Sprintf("%s/%s.jpg", vars["type"], vars["height"]))
-			}
+			randomIndex := r.Intn(len(sizeOptions))
+			pick := sizeOptions[randomIndex]
+			return fmt.Sprint(baseImageURL, fmt.Sprintf("%s/%s.jpg", pick[0], pick[1]))
 		}
+		if isvalidformat(vars["type"]) {
+			return fmt.Sprint(baseImageURL, fmt.Sprintf("%s.jpg", vars["height"]))
+		}
+		return fmt.Sprint(baseImageURL, fmt.Sprintf("%s/%s.jpg", vars["type"], vars["height"]))
 
 	}
-	return fmt.Sprint(base_image_url, fmt.Sprintf("%s/%s.jpg", vars["height"], vars["width"]))
+	return fmt.Sprint(baseImageURL, fmt.Sprintf("%s/%s.jpg", vars["height"], vars["width"]))
 
 }
 
+// GetImage downloads either a JPG, PNG or URL to an image from picsum.photos
 func GetImage(w http.ResponseWriter, req *http.Request) {
 	if !CheckMethod("GET", req) {
 		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
@@ -127,8 +134,8 @@ func GetImage(w http.ResponseWriter, req *http.Request) {
 	var imageType, imageURL string
 	vars := mux.Vars(req)
 	if vars["type"] == "" {
-		image_types := make([]string, 0)
-		image_types = append(image_types,
+		imageTypes := make([]string, 0)
+		imageTypes = append(imageTypes,
 			"png",
 			"jpg",
 			"url",
@@ -136,11 +143,11 @@ func GetImage(w http.ResponseWriter, req *http.Request) {
 		s := rand.NewSource(time.Now().Unix())
 		r := rand.New(s)
 
-		imageType = image_types[r.Intn(len(image_types))]
+		imageType = imageTypes[r.Intn(len(imageTypes))]
 	} else {
 		imageType = vars["type"]
 	}
-	imageURL = GeneratorImageURL(vars)
+	imageURL = GenerateImageURL(vars)
 	switch imageType {
 	case "png":
 		Image, ImageErr = downloadImage(imageURL, imageType)

@@ -5,6 +5,7 @@ import (
 	"net/http"
 )
 
+// BasicAuth handles HTTP basic auth
 func BasicAuth(handler http.HandlerFunc, username, password string) http.HandlerFunc {
 
 	return func(w http.ResponseWriter, r *http.Request) {

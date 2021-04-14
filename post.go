@@ -6,55 +6,61 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
-	"strings"
 
 	"github.com/gorilla/mux"
 )
 
+// PostJSON echos JSON back that it was sent
 func PostJSON(w http.ResponseWriter, req *http.Request) {
 	if !CheckMethod("POST", req) {
 		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
 	}
-
-	buf := new(strings.Builder)
-	_, err := io.Copy(buf, req.Body)
+	req.Body = http.MaxBytesReader(w, req.Body, maxUploadSize*1024*1024)
+	if req.Body == http.NoBody || req.ContentLength == 0 {
+		http.Error(w, "JSON body required", http.StatusBadRequest)
+		return
+	}
+	out, err := io.ReadAll(req.Body)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
 	}
 	w.Header().Set("Content-Type", "application/json")
-	fmt.Fprint(w, buf.String())
+	w.Write(out)
 }
 
+// PostFormFile saves a file that upload as a form-data/multipart request
 func PostFormFile(w http.ResponseWriter, req *http.Request) {
 	if !CheckMethod("POST", req) {
 		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
 	}
-	req.Body = http.MaxBytesReader(w, req.Body, max_upload_size*1024*1024)
+	req.Body = http.MaxBytesReader(w, req.Body, maxUploadSize*1024*1024)
 	file, handler, err := req.FormFile("file")
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 	}
 	defer file.Close()
-	f, err := os.OpenFile(filepath.Join(dir_name, handler.Filename), os.O_WRONLY|os.O_CREATE, 0666)
+	f, err := os.OpenFile(filepath.Join(dirName, handler.Filename), os.O_WRONLY|os.O_CREATE, 0666)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 	defer f.Close()
 	io.Copy(f, file)
-	fmt.Fprint(w, "Done")
+	fmt.Fprintln(w, "Done")
 }
 
+//PostFile saves a file that is posted in a request body
 func PostFile(w http.ResponseWriter, req *http.Request) {
 	if !CheckMethod("POST", req) {
 		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
 	}
+	req.Body = http.MaxBytesReader(w, req.Body, maxUploadSize*1024*1024)
 	vars := mux.Vars(req)
-	f, err := os.OpenFile(filepath.Join(dir_name, vars["name"]), os.O_WRONLY|os.O_CREATE, 0200)
+	f, err := os.OpenFile(filepath.Join(dirName, vars["name"]), os.O_WRONLY|os.O_CREATE, 0200)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 	defer f.Close()
 	io.Copy(f, req.Body)
-	fmt.Fprint(w, "Done")
-
+	fmt.Fprintln(w, "Done")
 }

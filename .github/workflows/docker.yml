@@ -5,8 +5,7 @@ on: [push]
 jobs:
   Build_Push:
     runs-on: ubuntu-latest
-      steps:
-
+    steps:
       - name: Login To GitHub
         run: echo ${{ secrets.CR_PAT }} | docker login ghcr.io -u $GITHUB_ACTOR --password-stdin
 
@@ -35,7 +34,7 @@ jobs:
         with:
           platforms: linux/amd64,linux/arm64,linux/armv8,darwin
           cache-from: type=local,src=/tmp/.buildx-cache
-          cache-to: type=local,dest=/tmp/.buildx-cache
+          cache-to: type=local,dest=h-action@v2
           push: ${{ env.branch == 'main' }}
           file: Dockerfile
           tags: |
@@ -43,4 +42,3 @@ jobs:
           build-args: |
               BUILD_DATE=${BUILD_DATE}
               VCS_REF=${VCS_REF}
-

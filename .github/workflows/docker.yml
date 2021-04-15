@@ -32,7 +32,7 @@ jobs:
       - name: Build and Push
         uses: docker/build-push-action@v2
         with:
-          platforms: linux/amd64,linux/arm64,darwin
+          platforms: linux/amd64,linux/arm64,linux/armv8
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=h-action@v2
           push: ${{ env.branch == 'main' }}

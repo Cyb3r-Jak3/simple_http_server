@@ -14,6 +14,7 @@ import (
 func PostJSON(w http.ResponseWriter, req *http.Request) {
 	if !CheckMethod("POST", req) {
 		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
+		return
 	}
 	req.Body = http.MaxBytesReader(w, req.Body, maxUploadSize*1024*1024)
 	if req.Body == http.NoBody || req.ContentLength == 0 {
@@ -33,6 +34,7 @@ func PostJSON(w http.ResponseWriter, req *http.Request) {
 func PostFormFile(w http.ResponseWriter, req *http.Request) {
 	if !CheckMethod("POST", req) {
 		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
+		return
 	}
 	req.Body = http.MaxBytesReader(w, req.Body, maxUploadSize*1024*1024)
 	file, handler, err := req.FormFile("file")

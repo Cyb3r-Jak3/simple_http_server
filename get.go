@@ -165,3 +165,12 @@ func GetImage(w http.ResponseWriter, req *http.Request) {
 	w.Header().Set("Content-Length", fmt.Sprint(len(Image)))
 	w.Write(Image)
 }
+
+// GetUUID returns a random UUID as a string
+func GetUUID(w http.ResponseWriter, req *http.Request) {
+	if !CheckMethod("GET", req) {
+		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
+	}
+	w.WriteHeader(200)
+	fmt.Fprint(w, Faker.UUID())
+}

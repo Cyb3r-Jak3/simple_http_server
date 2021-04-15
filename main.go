@@ -71,6 +71,7 @@ func main() {
 	r.HandleFunc("/get/image/{type}", GetImage)
 	r.HandleFunc("/get/image/{type}/{height}", GetImage)
 	r.HandleFunc("/get/image/{type}/{height}/{width}", GetImage)
+	r.HandleFunc("/get/uuid", GetUUID)
 	r.HandleFunc("/cookies/get", GetCookies)
 	r.HandleFunc("/cookies/set/{name}/{value}", SetCookie)
 	r.HandleFunc("/cookies/clear", ClearCookies)
@@ -78,6 +79,8 @@ func main() {
 	r.HandleFunc("/status/{code}", StatusCode)
 	r.HandleFunc("/redirect", Redirect)
 	r.HandleFunc("/redirect/{code}", Redirect)
+	r.HandleFunc("/auth/basic/{username}/{password}", DynamicAuth)
+	r.HandleFunc("/auth/basic/bad", BasicAuth(Hello, "admin", "admin"))
 
 	err := http.ListenAndServe(":8090", r)
 	if err != nil {

@@ -2,6 +2,7 @@ package main
 
 import (
 	"net/http"
+	"regexp"
 	"testing"
 
 	"github.com/brianvoe/gofakeit/v6"
@@ -75,4 +76,20 @@ func TestGetImageFake(t *testing.T) {
 	r, _ := http.NewRequest("GET", "/get/image/fake", nil)
 	rr := executeVarsRequest("/get/image/{type}", r, GetImage)
 	checkResponseCode(t, http.StatusOK, rr.Code)
+}
+
+func TestGetUUID(t *testing.T) {
+	Faker = gofakeit.NewCrypto()
+	gofakeit.SetGlobalFaker(Faker)
+	r, _ := http.NewRequest("GET", "/get/uuid", nil)
+	rr := executeRequest(r, GetUUID)
+	// Using regex because I don't want to import a uuid package for testing
+	reg := regexp.MustCompile("^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-4[a-fA-F0-9]{3}-[8|9|aA|bB][a-fA-F0-9]{3}-[a-fA-F0-9]{12}$")
+	if !reg.MatchString(rr.Body.String()) {
+		t.Error("UUID was not returned")
+	}
+	checkResponseCode(t, http.StatusOK, rr.Code)
+	r, _ = http.NewRequest("POST", "/get/uuid", nil)
+	rr = executeRequest(r, GetUUID)
+	checkResponseCode(t, http.StatusMethodNotAllowed, rr.Code)
 }

@@ -1,10 +1,8 @@
 package main
 
 import (
-	"math/rand"
 	"net/http"
 	"strconv"
-	"time"
 
 	"github.com/gorilla/mux"
 )
@@ -15,8 +13,7 @@ func Redirect(w http.ResponseWriter, req *http.Request) {
 	var err error
 	vars := mux.Vars(req)
 	if vars["code"] == "" {
-		r := rand.New(rand.NewSource(time.Now().Unix()))
-		redirectCode = (r.Intn(307-300) + 300)
+		redirectCode = Faker.Number(300, 307)
 	} else {
 		redirectCode, err = strconv.Atoi(vars["code"])
 		if err != nil {
@@ -24,7 +21,7 @@ func Redirect(w http.ResponseWriter, req *http.Request) {
 		}
 	}
 	if redirectCode <= 307 && redirectCode >= 300 {
-		http.Redirect(w, req, "https://www.jwhite.network", redirectCode)
+		http.Redirect(w, req, redirectURL, redirectCode)
 	} else {
 		http.Error(w, "Not a valid redirect HTTP code", http.StatusBadRequest)
 	}

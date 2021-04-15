@@ -37,6 +37,12 @@ func TestRedirect(t *testing.T) {
 	r, _ := http.NewRequest("GET", "/redirect/302", nil)
 	rr := executeVarsRequest("/redirect/{code}", r, Redirect)
 	checkResponseCode(t, http.StatusFound, rr.Code)
+	r, _ = http.NewRequest("GET", "/redirect/500", nil)
+	rr = executeVarsRequest("/redirect/{code}", r, Redirect)
+	checkResponseCode(t, http.StatusBadRequest, rr.Code)
+	r, _ = http.NewRequest("GET", "/redirect/hello", nil)
+	rr = executeVarsRequest("/redirect/{code}", r, Redirect)
+	checkResponseCode(t, http.StatusBadRequest, rr.Code)
 	r, _ = http.NewRequest("GET", "/redirect/", nil)
 	rr = executeRequest(r, Redirect)
 	if !(rr.Code <= 307 && rr.Code >= 300) {

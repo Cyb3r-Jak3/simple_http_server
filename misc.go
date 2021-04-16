@@ -8,6 +8,12 @@ import (
 	"github.com/gorilla/mux"
 )
 
+// Hello is a simple hello function
+func Hello(w http.ResponseWriter, _ *http.Request) {
+
+	fmt.Fprintf(w, "hello\n")
+}
+
 // EchoHeaders returns the headers of the request
 func EchoHeaders(w http.ResponseWriter, req *http.Request) {
 

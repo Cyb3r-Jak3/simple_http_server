@@ -16,6 +16,40 @@ archives:
       windows: Windows
       386: i386
       amd64: x86_64
+dockers:
+  - image_templates:
+    - "ghcr.io/cyb3r-jak3/example_http_server:latest"
+    - "ghcr.io/cyb3r-jak3/example_http_server:{{ .Tag }}"
+    - "ghcr.io/cyb3r-jak3/example_http_server:v{{ .Major }}"
+    goarch: amd64
+    dockerfile: Dockerfile
+    use_buildx: true
+    build_flag_templates:
+    - "--platform=linux/amd64"
+    - "--label=org.opencontainers.image.created={{.Date}}"
+    - "--label=org.opencontainers.image.title={{.ProjectName}}"
+    - "--label=org.opencontainers.image.revision={{.FullCommit}}"
+    - "--label=org.opencontainers.image.version={{.Version}}"
+  - image_templates:
+    - "ghcr.io/cyb3r-jak3/example_http_server:latest-arm64"
+    - "ghcr.io/cyb3r-jak3/example_http_server:{{ .Tag }}-arm64"
+    - "ghcr.io/cyb3r-jak3/example_http_server:v{{ .Major }}-arm64"
+    goarch: arm64
+    dockerfile: Dockerfile
+    use_buildx: true
+    build_flag_templates:
+    - "--platform=linux/arm64"
+    - "--label=org.opencontainers.image.created={{.Date}}"
+    - "--label=org.opencontainers.image.title={{.ProjectName}}"
+    - "--label=org.opencontainers.image.revision={{.FullCommit}}"
+    - "--label=org.opencontainers.image.version={{.Version}}"
+
+docker_manifests:
+- name_template: ghcr.io/cyb3r-jak3/example_http_server:{{ .Version }}
+  image_templates:
+  - ghcr.io/cyb3r-jak3/example_http_server:{{ .Version }}-amd64
+  - ghcr.io/cyb3r-jak3/example_http_server:{{ .Version }}-arm64v8
+
 checksum:
   name_template: 'checksums.txt'
 snapshot:
@@ -26,3 +60,6 @@ changelog:
     exclude:
       - '^docs:'
       - '^test:'
+signs:
+  - artifacts: all
+    cmd: gpg2

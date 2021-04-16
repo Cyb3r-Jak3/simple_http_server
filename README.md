@@ -2,7 +2,7 @@
 
 [![Test Go](https://github.com/Cyb3r-Jak3/simple_http_server/actions/workflows/golang.yml/badge.svg)](https://github.com/Cyb3r-Jak3/simple_http_server/actions/workflows/golang.yml) [![Publish Docker](https://github.com/Cyb3r-Jak3/simple_http_server/actions/workflows/docker.yml/badge.svg)](https://github.com/Cyb3r-Jak3/simple_http_server/actions/workflows/docker.yml) [![DeepSource](https://deepsource.io/gh/Cyb3r-Jak3/simple_http_server.svg/?label=active+issues&show_trend=true)](https://deepsource.io/gh/Cyb3r-Jak3/simple_http_server/?ref=repository-badge)
 
-This is a simple HTTP server which I have used to learn about HTTP requests in GoLang.
+This is a simple HTTP server which I have used to learn about HTTP requests in GoLang. Mocked data is generated using [gofakeit](https://github.com/brianvoe/gofakeit/v6)
 
 ## Routes
 

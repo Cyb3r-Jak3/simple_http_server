@@ -9,7 +9,7 @@ updates:
     assignees:
       - "Cyb3r-Jak3"
     commit-message:
-      prefix: "Github Actions Update"
+      prefix: "Action Update"
     reviewers:
       - "Cyb3r-Jak3"
 

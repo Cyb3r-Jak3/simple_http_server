@@ -41,8 +41,9 @@ jobs:
 
 
     - name: Coverage to deepsource
+      if: ${{ runner.os == 'Linux' }}
       run: |
         curl https://deepsource.io/cli | sh
-        deepsource report --analyzer test-coverage --key go --value-file ./c.out
+        ./bin/deepsource report --analyzer test-coverage --key go --value-file ./c.out
       env: 
         DEEPSOURCE_DSN: ${{ secrets.DEEPSOURCE_DSN }}

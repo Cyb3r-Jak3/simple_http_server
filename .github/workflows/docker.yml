@@ -37,10 +37,12 @@ jobs:
           cache-to: type=local,dest=h-action@v2
           push: ${{ env.branch == 'main' }}
           file: Dockerfile
-          tags: ghcr.io/cyb3r-jak3/example_http_server:latest
+          tags: |
+            ghcr.io/cyb3r-jak3/example_http_server:latest
           build-args: |
-              BUILD_DATE=${BUILD_DATE}
-              VCS_REF=${VCS_REF}
+            BUILD_DATE=${BUILD_DATE}
+            VCS_REF=${VCS_REF}
       
       - name: Inspect
+        continue-on-error: true
         run: docker inspect ghcr.io/cyb3r-jak3/example_http_server:latest

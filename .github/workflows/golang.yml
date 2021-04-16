@@ -33,3 +33,7 @@ jobs:
         mkdir tmp
         go test -coverprofile="c.out"
         go tool cover -func="c.out"
+    - name: Coverage to deepsource
+      run: |
+        curl https://deepsource.io/cli | sh
+        ./bin/deepsource report --analyzer test-coverage --key go --value-file ./c.out

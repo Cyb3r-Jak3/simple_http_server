@@ -22,12 +22,14 @@ func EchoHeaders(w http.ResponseWriter, req *http.Request) {
 func StatusCode(w http.ResponseWriter, req *http.Request) {
 	vars := mux.Vars(req)
 	if vars["code"] == "" {
-		fmt.Fprintf(w, "OK")
+		w.WriteHeader(200)
+		w.Write([]byte("Ok"))
 	} else {
 		i, err := strconv.Atoi(vars["code"])
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 		}
-		http.Error(w, "", i)
+		w.WriteHeader(i)
+		w.Write([]byte(fmt.Sprintf("Status Code: %d", i)))
 	}
 }

@@ -1,4 +1,4 @@
-module github.com/Cyb3r-Jak3/echo_server/v2
+module github.com/Cyb3r-Jak3/simple_http_server/v2
 
 go 1.16
 

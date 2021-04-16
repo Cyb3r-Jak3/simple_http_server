@@ -42,3 +42,6 @@ jobs:
           build-args: |
               BUILD_DATE=${BUILD_DATE}
               VCS_REF=${VCS_REF}
+      
+      - name: Inspect
+        run: docker inspect ghcr.io/cyb3r-jak3/example_http_server:latest

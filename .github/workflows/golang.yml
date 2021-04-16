@@ -39,9 +39,10 @@ jobs:
         go test -coverprofile="c.out"
         go tool cover -func="c.out"
 
-    - name: Report test coverage to DeepSource
-      uses: deepsourcelabs/test-coverage-action@master
-      with:
-        key: go
-        coverage-file: c.out
-        dsn: ${{ secrets.DEEPSOURCE_DSN }}
+
+    - name: Coverage to deepsource
+      run: |
+        curl https://deepsource.io/cli | sh
+        deepsource report --analyzer test-coverage --key go --value-file ./c.out
+      env: 
+        DEEPSOURCE_DSN: ${{ secrets.DEEPSOURCE_DSN }}

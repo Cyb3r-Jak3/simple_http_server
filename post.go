@@ -42,7 +42,7 @@ func PostFormFile(w http.ResponseWriter, req *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 	}
 	defer file.Close()
-	f, err := os.OpenFile(filepath.Join(dirName, handler.Filename), os.O_WRONLY|os.O_CREATE, 0666)
+	f, err := os.OpenFile(filepath.Join(dirName, handler.Filename), os.O_WRONLY|os.O_CREATE, 0200)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}

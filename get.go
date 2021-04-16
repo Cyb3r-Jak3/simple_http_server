@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"image/jpeg"
 	"image/png"
-	"io"
+	"io/ioutil"
 	"math/rand"
 	"net/http"
 	"strconv"
@@ -63,7 +63,7 @@ func downloadImage(url string, format string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	respImage, err := io.ReadAll(resp.Body)
+	respImage, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
 	}

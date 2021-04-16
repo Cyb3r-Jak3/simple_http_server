@@ -1,0 +1,49 @@
+name: Test Go
+
+on: [push]
+jobs:
+  test:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+
+    steps:
+    - name: Install Go
+      uses: actions/setup-go@v2
+      with:
+        go-version: 1.16
+
+    - uses: actions/cache@v2
+      with:
+        path: |
+          ~/go/pkg/mod
+          ~/.cache/go-build
+          ~/Library/Caches/go-build
+          %LocalAppData%\go-build
+        key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+        restore-keys: |
+          ${{ runner.os }}-go-
+
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Lint
+      run: |
+        go get -u golang.org/x/lint/golint
+        make lint
+
+    - name: Test
+      run: |
+        mkdir tmp
+        go test -coverprofile="c.out"
+        go tool cover -func="c.out"
+
+
+    - name: Coverage to deepsource
+      if: ${{ runner.os == 'Linux' }}
+      run: |
+        curl https://deepsource.io/cli | sh
+        ./bin/deepsource report --analyzer test-coverage --key go --value-file ./c.out
+      env: 
+        DEEPSOURCE_DSN: ${{ secrets.DEEPSOURCE_DSN }}

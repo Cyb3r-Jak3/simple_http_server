@@ -1,6 +1,5 @@
 before:
   hooks:
-    # You may remove this if you don't use go modules.
     - go mod tidy
 builds:
   - env:
@@ -21,8 +20,11 @@ dockers:
     - "ghcr.io/cyb3r-jak3/example_http_server:latest"
     - "ghcr.io/cyb3r-jak3/example_http_server:{{ .Tag }}"
     - "ghcr.io/cyb3r-jak3/example_http_server:v{{ .Major }}"
+    - "ghcr.io/cyb3r-jak3/example_http_server:latest-amd64"
+    - "ghcr.io/cyb3r-jak3/example_http_server:{{ .Tag }}-amd64"
+    - "ghcr.io/cyb3r-jak3/example_http_server:v{{ .Major }}-amd64"
     goarch: amd64
-    dockerfile: Dockerfile
+    dockerfile: release.Dockerfile
     use_buildx: true
     build_flag_templates:
     - "--platform=linux/amd64"
@@ -30,12 +32,13 @@ dockers:
     - "--label=org.opencontainers.image.title={{.ProjectName}}"
     - "--label=org.opencontainers.image.revision={{.FullCommit}}"
     - "--label=org.opencontainers.image.version={{.Version}}"
+
   - image_templates:
     - "ghcr.io/cyb3r-jak3/example_http_server:latest-arm64"
     - "ghcr.io/cyb3r-jak3/example_http_server:{{ .Tag }}-arm64"
     - "ghcr.io/cyb3r-jak3/example_http_server:v{{ .Major }}-arm64"
     goarch: arm64
-    dockerfile: Dockerfile
+    dockerfile: release.Dockerfile
     use_buildx: true
     build_flag_templates:
     - "--platform=linux/arm64"
@@ -48,7 +51,7 @@ docker_manifests:
 - name_template: ghcr.io/cyb3r-jak3/example_http_server:{{ .Version }}
   image_templates:
   - ghcr.io/cyb3r-jak3/example_http_server:{{ .Version }}-amd64
-  - ghcr.io/cyb3r-jak3/example_http_server:{{ .Version }}-arm64v8
+  - ghcr.io/cyb3r-jak3/example_http_server:{{ .Version }}-arm64
 
 checksum:
   name_template: 'checksums.txt'
@@ -62,4 +65,4 @@ changelog:
       - '^test:'
 signs:
   - artifacts: all
-    cmd: gpg2
+    args: ["--batch", "-u", "{{ .Env.GPG_FINGERPRINT }}", "--output", "${signature}", "--detach-sign", "${artifact}"]

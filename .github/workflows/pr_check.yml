@@ -13,6 +13,12 @@ jobs:
     - uses: actions/checkout@v2
 
     -
+        name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+    -
       name: Import GPG key
       id: import_gpg
       uses: crazy-max/ghaction-import-gpg@v3
@@ -27,3 +33,10 @@ jobs:
         args: --snapshot --skip-publish --rm-dist
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GPG_FINGERPRINT: ${{ steps.import_gpg.outputs.fingerprint }}
+
+    - name: dist artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: GoReleaser
+          path: dist

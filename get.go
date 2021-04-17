@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"encoding/base64"
 	"fmt"
 	"image/jpeg"
 	"image/png"
@@ -193,6 +194,17 @@ func GetIPv6(w http.ResponseWriter, req *http.Request) {
 	}
 	w.WriteHeader(200)
 	w.Write([]byte(Faker.IPv6Address()))
+}
+
+// GetBase64 return random paragraph that is base64 encoded
+func GetBase64(w http.ResponseWriter, req *http.Request) {
+	if !CheckMethod("GET", req) {
+		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
+	}
+	text := Faker.Paragraph(1, 5, 100, " ")
+	encText := base64.URLEncoding.EncodeToString([]byte(text))
+	w.WriteHeader(200)
+	w.Write([]byte(encText))
 }
 
 //GetXML generates an XML file for a given number of rows

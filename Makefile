@@ -7,3 +7,6 @@ coverage:
 lint:
 	go vet .
 	golint -set_exit_status .
+
+dry-release:
+	goreleaser --snapshot --skip-publish --rm-dist

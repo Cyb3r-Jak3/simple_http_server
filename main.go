@@ -74,6 +74,7 @@ func main() {
 	r.HandleFunc("/get/uuid", GetUUID)
 	r.HandleFunc("/get/ipv4", GetIPv4)
 	r.HandleFunc("/get/ipv6", GetIPv6)
+	r.HandleFunc("/get/base64", GetBase64)
 	r.HandleFunc("/get/xml", GetXML)
 	r.HandleFunc("/get/xml/{rows}", GetXML)
 	r.HandleFunc("/cookies/get", GetCookies)

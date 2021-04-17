@@ -116,6 +116,17 @@ func TestGetIPv6(t *testing.T) {
 	checkResponseCode(t, http.StatusMethodNotAllowed, rr.Code)
 }
 
+func TestGetBase64(t *testing.T) {
+	Faker = gofakeit.NewCrypto()
+	gofakeit.SetGlobalFaker(Faker)
+	r, _ := http.NewRequest("GET", "/get/base64", nil)
+	rr := executeRequest(r, GetBase64)
+	checkResponseCode(t, http.StatusOK, rr.Code)
+	r, _ = http.NewRequest("POST", "/get/base64", nil)
+	rr = executeRequest(r, GetBase64)
+	checkResponseCode(t, http.StatusMethodNotAllowed, rr.Code)
+}
+
 func TestGETXML(t *testing.T) {
 	Faker = gofakeit.NewCrypto()
 	gofakeit.SetGlobalFaker(Faker)

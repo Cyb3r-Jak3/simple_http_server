@@ -3,7 +3,7 @@ name: Build Docker
 on: [push]
 
 jobs:
-  Build_Push:
+  Build:
     runs-on: ubuntu-latest
     steps:
       - name: Login To GitHub

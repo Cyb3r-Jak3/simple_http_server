@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/base64"
 	"net/http"
 	"regexp"
 	"testing"
@@ -122,6 +123,10 @@ func TestGetBase64(t *testing.T) {
 	r, _ := http.NewRequest("GET", "/get/base64", nil)
 	rr := executeRequest(r, GetBase64)
 	checkResponseCode(t, http.StatusOK, rr.Code)
+	_, err := base64.URLEncoding.DecodeString(rr.Body.String())
+	if err != nil {
+		t.Errorf("Expected to decode base64 got %s", err.Error())
+	}
 	r, _ = http.NewRequest("POST", "/get/base64", nil)
 	rr = executeRequest(r, GetBase64)
 	checkResponseCode(t, http.StatusMethodNotAllowed, rr.Code)

@@ -223,9 +223,11 @@ func GetXML(w http.ResponseWriter, req *http.Request) {
 		RowCount:      rowCount,
 		Indent:        true,
 		Fields: []gofakeit.Field{
+			{Name: "id", Function: "autoincrement"},
 			{Name: "first_name", Function: "firstname"},
 			{Name: "last_name", Function: "lastname"},
-			{Name: "password", Function: "password", Params: map[string][]string{"special": {"false"}}},
+			{Name: "email", Function: "email"},
+			{Name: "tag", Function: "gamertag"},
 		},
 	})
 	if err != nil {

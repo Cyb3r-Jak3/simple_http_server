@@ -1,9 +1,9 @@
-name: Publish Docker
+name: Build Docker
 
 on: [push]
 
 jobs:
-  Build_Push:
+  Build:
     runs-on: ubuntu-latest
     steps:
       - name: Login To GitHub
@@ -29,20 +29,13 @@ jobs:
           key: buildx-experimental-${{ github.sha }}
           restore-keys: buildx-experimental
 
-      - name: Build and Push
+      - name: Build
         uses: docker/build-push-action@v2
         with:
           platforms: linux/amd64,linux/arm64
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=h-action@v2
-          push: ${{ env.branch == 'main' }}
+          push: false
           file: Dockerfile
           tags: |
             ghcr.io/cyb3r-jak3/example_http_server:latest
-          build-args: |
-            BUILD_DATE=${BUILD_DATE}
-            VCS_REF=${VCS_REF}
-      
-      - name: Inspect
-        continue-on-error: true
-        run: docker inspect ghcr.io/cyb3r-jak3/example_http_server:latest

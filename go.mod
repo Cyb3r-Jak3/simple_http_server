@@ -3,6 +3,6 @@ module github.com/Cyb3r-Jak3/simple_http_server/v2
 go 1.16
 
 require (
-	github.com/brianvoe/gofakeit/v6 v6.3.0
+	github.com/brianvoe/gofakeit/v6 v6.4.0
 	github.com/gorilla/mux v1.8.0
 )

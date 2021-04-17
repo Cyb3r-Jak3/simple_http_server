@@ -2,10 +2,11 @@ package main
 
 import (
 	"bytes"
+	"encoding/base64"
 	"fmt"
 	"image/jpeg"
 	"image/png"
-	"io"
+	"io/ioutil"
 	"math/rand"
 	"net/http"
 	"strconv"
@@ -15,17 +16,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
-// Hello is a simple hello function
-func Hello(w http.ResponseWriter, _ *http.Request) {
-
-	fmt.Fprintf(w, "hello\n")
-}
-
-// GetJSON Return random rows of JSON
-func GetJSON(w http.ResponseWriter, req *http.Request) {
-	if !CheckMethod("GET", req) {
-		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
-	}
+func generaterowcount(req *http.Request) (int, error) {
 	vars := mux.Vars(req)
 	var rowCount int
 	var err error
@@ -33,9 +24,19 @@ func GetJSON(w http.ResponseWriter, req *http.Request) {
 		rowCount = rand.Intn(defaultRowCount)
 	} else {
 		rowCount, err = strconv.Atoi(vars["rows"])
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusBadRequest)
-		}
+		return rowCount, err
+	}
+	return rowCount, nil
+}
+
+// GetJSON Return random rows of JSON
+func GetJSON(w http.ResponseWriter, req *http.Request) {
+	if !CheckMethod("GET", req) {
+		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
+	}
+	rowCount, err := generaterowcount(req)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
 	}
 	garbage, err := Faker.JSON(&gofakeit.JSONOptions{
 		Type:     "array",
@@ -53,7 +54,8 @@ func GetJSON(w http.ResponseWriter, req *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 	w.Header().Set("Content-Type", "application/json")
-	fmt.Fprint(w, string(garbage))
+	w.WriteHeader(200)
+	w.Write(garbage)
 }
 
 // downloadImage downs an image from the URL and encodes to PNG if needed
@@ -62,7 +64,7 @@ func downloadImage(url string, format string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	respImage, err := io.ReadAll(resp.Body)
+	respImage, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
 	}
@@ -163,6 +165,7 @@ func GetImage(w http.ResponseWriter, req *http.Request) {
 		http.Error(w, ImageErr.Error(), http.StatusInternalServerError)
 	}
 	w.Header().Set("Content-Length", fmt.Sprint(len(Image)))
+	w.WriteHeader(200)
 	w.Write(Image)
 }
 
@@ -172,5 +175,65 @@ func GetUUID(w http.ResponseWriter, req *http.Request) {
 		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
 	}
 	w.WriteHeader(200)
-	fmt.Fprint(w, Faker.UUID())
+	w.Write([]byte(Faker.UUID()))
+}
+
+// GetIPv4 returns a random IPv4 Address
+func GetIPv4(w http.ResponseWriter, req *http.Request) {
+	if !CheckMethod("GET", req) {
+		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
+	}
+	w.WriteHeader(200)
+	w.Write([]byte(Faker.IPv4Address()))
+}
+
+// GetIPv6 returns a random IPv6 Address
+func GetIPv6(w http.ResponseWriter, req *http.Request) {
+	if !CheckMethod("GET", req) {
+		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
+	}
+	w.WriteHeader(200)
+	w.Write([]byte(Faker.IPv6Address()))
+}
+
+// GetBase64 return random paragraph that is base64 encoded
+func GetBase64(w http.ResponseWriter, req *http.Request) {
+	if !CheckMethod("GET", req) {
+		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
+	}
+	text := Faker.Paragraph(1, 5, 100, " ")
+	encText := base64.URLEncoding.EncodeToString([]byte(text))
+	w.WriteHeader(200)
+	w.Write([]byte(encText))
+}
+
+//GetXML generates an XML file for a given number of rows
+func GetXML(w http.ResponseWriter, req *http.Request) {
+	if !CheckMethod("GET", req) {
+		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
+	}
+	rowCount, err := generaterowcount(req)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+	}
+	garbage, err := Faker.XML(&gofakeit.XMLOptions{
+		Type:          "array",
+		RootElement:   "xml",
+		RecordElement: "record",
+		RowCount:      rowCount,
+		Indent:        true,
+		Fields: []gofakeit.Field{
+			{Name: "id", Function: "autoincrement"},
+			{Name: "first_name", Function: "firstname"},
+			{Name: "last_name", Function: "lastname"},
+			{Name: "email", Function: "email"},
+			{Name: "tag", Function: "gamertag"},
+		},
+	})
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+	w.Header().Set("Content-Type", "text/xml")
+	w.WriteHeader(200)
+	w.Write(garbage)
 }

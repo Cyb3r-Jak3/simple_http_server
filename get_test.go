@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/base64"
 	"net/http"
 	"regexp"
 	"testing"
@@ -92,4 +93,58 @@ func TestGetUUID(t *testing.T) {
 	r, _ = http.NewRequest("POST", "/get/uuid", nil)
 	rr = executeRequest(r, GetUUID)
 	checkResponseCode(t, http.StatusMethodNotAllowed, rr.Code)
+}
+
+func TestGetIPv4(t *testing.T) {
+	Faker = gofakeit.NewCrypto()
+	gofakeit.SetGlobalFaker(Faker)
+	r, _ := http.NewRequest("GET", "/get/ipv4", nil)
+	rr := executeRequest(r, GetIPv4)
+	checkResponseCode(t, http.StatusOK, rr.Code)
+	r, _ = http.NewRequest("POST", "/get/ipv4", nil)
+	rr = executeRequest(r, GetIPv4)
+	checkResponseCode(t, http.StatusMethodNotAllowed, rr.Code)
+}
+
+func TestGetIPv6(t *testing.T) {
+	Faker = gofakeit.NewCrypto()
+	gofakeit.SetGlobalFaker(Faker)
+	r, _ := http.NewRequest("GET", "/get/ipv6", nil)
+	rr := executeRequest(r, GetIPv6)
+	checkResponseCode(t, http.StatusOK, rr.Code)
+	r, _ = http.NewRequest("POST", "/get/ipv6", nil)
+	rr = executeRequest(r, GetIPv6)
+	checkResponseCode(t, http.StatusMethodNotAllowed, rr.Code)
+}
+
+func TestGetBase64(t *testing.T) {
+	Faker = gofakeit.NewCrypto()
+	gofakeit.SetGlobalFaker(Faker)
+	r, _ := http.NewRequest("GET", "/get/base64", nil)
+	rr := executeRequest(r, GetBase64)
+	checkResponseCode(t, http.StatusOK, rr.Code)
+	_, err := base64.URLEncoding.DecodeString(rr.Body.String())
+	if err != nil {
+		t.Errorf("Expected to decode base64 got %s", err.Error())
+	}
+	r, _ = http.NewRequest("POST", "/get/base64", nil)
+	rr = executeRequest(r, GetBase64)
+	checkResponseCode(t, http.StatusMethodNotAllowed, rr.Code)
+}
+
+func TestGETXML(t *testing.T) {
+	Faker = gofakeit.NewCrypto()
+	gofakeit.SetGlobalFaker(Faker)
+	r, _ := http.NewRequest("POST", "/get/xml", nil)
+	rr := executeRequest(r, GetXML)
+	checkResponseCode(t, http.StatusMethodNotAllowed, rr.Code)
+	r, _ = http.NewRequest("GET", "/get/xml", nil)
+	rr = executeRequest(r, GetXML)
+	checkResponseCode(t, http.StatusOK, rr.Code)
+	r, _ = http.NewRequest("GET", "/get/xml/5", nil)
+	rr = executeVarsRequest("/get/xml/{rows}", r, GetXML)
+	checkResponseCode(t, http.StatusOK, rr.Code)
+	r, _ = http.NewRequest("GET", "/get/xml/hello", nil)
+	rr = executeVarsRequest("/get/xml/{rows}", r, GetXML)
+	checkResponseCode(t, http.StatusBadRequest, rr.Code)
 }

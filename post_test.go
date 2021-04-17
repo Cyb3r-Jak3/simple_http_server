@@ -2,7 +2,7 @@ package main
 
 import (
 	"bytes"
-	"io"
+	"io/ioutil"
 	"mime/multipart"
 	"net/http"
 	"os"
@@ -32,7 +32,7 @@ func TestPostFormFile(t *testing.T) {
 	rr := executeRequest(r, PostFormFile)
 	checkResponseCode(t, http.StatusMethodNotAllowed, rr.Code)
 	file, _ := os.Open("main.go")
-	fileContents, _ := io.ReadAll(file)
+	fileContents, _ := ioutil.ReadAll(file)
 	file.Close()
 	body := new(bytes.Buffer)
 	writer := multipart.NewWriter(body)

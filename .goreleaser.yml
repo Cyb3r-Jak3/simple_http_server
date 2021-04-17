@@ -20,9 +20,6 @@ dockers:
     - "ghcr.io/cyb3r-jak3/example_http_server:latest"
     - "ghcr.io/cyb3r-jak3/example_http_server:{{ .Tag }}"
     - "ghcr.io/cyb3r-jak3/example_http_server:v{{ .Major }}"
-    - "ghcr.io/cyb3r-jak3/example_http_server:latest-amd64"
-    - "ghcr.io/cyb3r-jak3/example_http_server:{{ .Tag }}-amd64"
-    - "ghcr.io/cyb3r-jak3/example_http_server:v{{ .Major }}-amd64"
     goarch: amd64
     dockerfile: release.Dockerfile
     use_buildx: true
@@ -46,12 +43,6 @@ dockers:
     - "--label=org.opencontainers.image.title={{.ProjectName}}"
     - "--label=org.opencontainers.image.revision={{.FullCommit}}"
     - "--label=org.opencontainers.image.version={{.Version}}"
-
-docker_manifests:
-- name_template: ghcr.io/cyb3r-jak3/example_http_server:{{ .Version }}
-  image_templates:
-  - ghcr.io/cyb3r-jak3/example_http_server:{{ .Version }}-amd64
-  - ghcr.io/cyb3r-jak3/example_http_server:{{ .Version }}-arm64
 
 checksum:
   name_template: 'checksums.txt'

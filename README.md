@@ -4,6 +4,12 @@
 
 This is a simple HTTP server which I create while learning about HTTP requests in GoLang. Mocked data is generated using [gofakeit](https://github.com/brianvoe/gofakeit/v6)
 
+Releases are signed with my [release key](https://gist.github.com/Cyb3r-Jak3/8a9ba09406d991d5bab0d677b1af799d)
+
+## Running
+
+To run this program you can download either the docker image or a [release binary](https://github.com/Cyb3r-Jak3/simple_http_server/releases/latest). The port used by the server is 8090.
+
 ## Routes
 
 The routes that are available are:

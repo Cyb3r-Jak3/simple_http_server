@@ -1,8 +1,8 @@
 # Simple HTTP Server
 
-[![Test Go](https://github.com/Cyb3r-Jak3/simple_http_server/actions/workflows/golang.yml/badge.svg)](https://github.com/Cyb3r-Jak3/simple_http_server/actions/workflows/golang.yml) [![Publish Docker](https://github.com/Cyb3r-Jak3/simple_http_server/actions/workflows/docker.yml/badge.svg)](https://github.com/Cyb3r-Jak3/simple_http_server/actions/workflows/docker.yml) [![DeepSource](https://deepsource.io/gh/Cyb3r-Jak3/simple_http_server.svg/?label=active+issues&show_trend=true)](https://deepsource.io/gh/Cyb3r-Jak3/simple_http_server/?ref=repository-badge)
+[![Test Go](https://github.com/Cyb3r-Jak3/simple_http_server/actions/workflows/golang.yml/badge.svg)](https://github.com/Cyb3r-Jak3/simple_http_server/actions/workflows/golang.yml) [![Publish Docker](https://github.com/Cyb3r-Jak3/simple_http_server/actions/workflows/docker.yml/badge.svg)](https://github.com/Cyb3r-Jak3/simple_http_server/actions/workflows/docker.yml) [![DeepSource](https://deepsource.io/gh/Cyb3r-Jak3/simple_http_server.svg/?label=active+issues&show_trend=true)](https://deepsource.io/gh/Cyb3r-Jak3/simple_http_server/?ref=repository-badge)[![Go Report Card](https://goreportcard.com/badge/github.com/Cyb3r-Jak3/simple_http_server)](https://goreportcard.com/report/github.com/Cyb3r-Jak3/simple_http_server)
 
-This is a simple HTTP server which I have used to learn about HTTP requests in GoLang. Mocked data is generated using [gofakeit](https://github.com/brianvoe/gofakeit/v6)
+This is a simple HTTP server which I create while learning about HTTP requests in GoLang. Mocked data is generated using [gofakeit](https://github.com/brianvoe/gofakeit/v6)
 
 ## Routes
 
@@ -34,13 +34,29 @@ Saves a post binary file with the name
 
   {name}: Query string set that will set the name of the file
 
-### get/json/{rows}
+### /get/json/{rows}
 
 Returns a number of JSON rows
 
 **Optional**:
 
     {rows}: Return the number of rows to generate. Default is 10
+
+### /get/xml/{rows}
+
+Returns a number of XML rows
+
+### /get/ipv4
+
+Returns an IPv4 address
+
+### /get/ipv6
+
+Returns an IPv6 address
+
+## /get/base64
+
+Returns a paragraph that has been base64 encoded
 
 ### /get/image{type}/{height}/{width}
 

@@ -29,6 +29,7 @@ dockers:
     - "--label=org.opencontainers.image.title={{.ProjectName}}"
     - "--label=org.opencontainers.image.revision={{.FullCommit}}"
     - "--label=org.opencontainers.image.version={{.Version}}"
+    - "--label=org.opencontainers.image.source = "https://github.com/Cyb3r-Jak3/simple_http_server"
 
   - image_templates:
     - "ghcr.io/cyb3r-jak3/example_http_server:latest-arm64"
@@ -43,6 +44,8 @@ dockers:
     - "--label=org.opencontainers.image.title={{.ProjectName}}"
     - "--label=org.opencontainers.image.revision={{.FullCommit}}"
     - "--label=org.opencontainers.image.version={{.Version}}"
+    - "--label=org.opencontainers.image.source = "https://github.com/Cyb3r-Jak3/simple_http_server"
+
 
 checksum:
   name_template: 'checksums.txt'

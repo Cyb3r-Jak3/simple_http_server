@@ -42,9 +42,9 @@ jobs:
         go tool cover -func="c.out"
 
     - name: Run Gosec Security Scanner
-        uses: securego/gosec@master
-        with:
-          args: ./...
+      uses: securego/gosec@master
+      with:
+        args: ./...
 
     - name: Build
       run: |

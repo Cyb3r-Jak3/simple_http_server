@@ -4,6 +4,7 @@ on: [push]
 jobs:
   test:
     strategy:
+      fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
     runs-on: ${{ matrix.os }}
@@ -41,10 +42,17 @@ jobs:
         go test -coverprofile="c.out"
         go tool cover -func="c.out"
 
+    - name: CMD GoSec
+      continue-on-error: true
+      run: |
+        go get -u github.com/securego/gosec/v2/cmd/gosec
+        gosec ./...
+        
+
     - name: Run Gosec Security Scanner
       uses: securego/gosec@master
       with:
-        args: .
+        args: ./...
 
     - name: Build
       run: |

@@ -38,4 +38,4 @@ jobs:
           push: false
           file: Dockerfile
           tags: |
-            ghcr.io/cyb3r-jak3/example_http_server:latest
+            ghcr.io/cyb3r-jak3/simple_http_server:latest

@@ -44,11 +44,11 @@ jobs:
     - name: Run Gosec Security Scanner
       uses: securego/gosec@master
       with:
-        args: ./
+        args: .
 
     - name: Build
       run: |
-        go get -d -v ./
+        go get -d -v .
         go build
 
 

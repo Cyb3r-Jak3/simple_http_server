@@ -21,8 +21,7 @@ func DynamicAuth(w http.ResponseWriter, req *http.Request) {
 		w.Write([]byte("Unauthorized.\n"))
 		return
 	}
-	w.WriteHeader(200)
-	w.Write([]byte("Authenticated"))
+	StringResponse(w, "Authenticated")
 }
 
 // BasicAuth handles HTTP basic auth

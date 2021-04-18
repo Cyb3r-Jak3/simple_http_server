@@ -60,7 +60,7 @@ Returns an IPv4 address
 
 Returns an IPv6 address
 
-## /get/base64
+### /get/base64
 
 Returns a paragraph that has been base64 encoded
 

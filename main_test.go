@@ -31,6 +31,15 @@ func TestHeaders(t *testing.T) {
 	checkResponseCode(t, http.StatusOK, rr.Code)
 }
 
+func TestAllowedMethod(t *testing.T) {
+	r, _ := http.NewRequest("GET", "/", nil)
+	rr := executeRequest(r, AllowedMethod(Hello, "POST"))
+	checkResponseCode(t, http.StatusMethodNotAllowed, rr.Code)
+	r, _ = http.NewRequest("GET", "/", nil)
+	rr = executeRequest(r, AllowedMethod(Hello, "GET,POST"))
+	checkResponseCode(t, http.StatusOK, rr.Code)
+}
+
 func TestRedirect(t *testing.T) {
 	Faker = gofakeit.NewCrypto()
 	gofakeit.SetGlobalFaker(Faker)
@@ -97,7 +106,6 @@ func executeVarsRequest(path string, req *http.Request, responseFunction func(w 
 
 func executeRequest(req *http.Request, responseFunction func(w http.ResponseWriter, r *http.Request)) *httptest.ResponseRecorder {
 	rr := httptest.NewRecorder()
-
 	http := http.HandlerFunc(responseFunction)
 	http.ServeHTTP(rr, req)
 	return rr

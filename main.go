@@ -4,20 +4,48 @@ import (
 	"crypto/sha256"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
 	"path"
+	"strings"
 	"time"
 
 	"github.com/brianvoe/gofakeit/v6"
 	"github.com/gorilla/mux"
 )
 
-// CheckMethod checks to make sure a request has an allowed method
-func CheckMethod(method string, req *http.Request) bool {
-	return method == req.Method
+// AllowedMethod is a decorator to get methods
+func AllowedMethod(handler http.HandlerFunc, methods string) http.HandlerFunc {
+	return func(w http.ResponseWriter, req *http.Request) {
+		for _, b := range strings.Split(methods, ",") {
+			if b == req.Method {
+				handler(w, req)
+			}
+		}
+		http.Error(w, "Method not Allowed", http.StatusMethodNotAllowed)
+	}
+}
+
+// StringResponse writes a http response as a string
+func StringResponse(w http.ResponseWriter, response string) {
+	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte(response))
+}
+
+// JSONResponse writes a http response as JSON
+func JSONResponse(w http.ResponseWriter, response []byte) {
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+	w.WriteHeader(http.StatusOK)
+	w.Write(response)
+}
+
+// ContentResponse writes a http response with a given content type
+func ContentResponse(w http.ResponseWriter, contentType string, response []byte) {
+	w.Header().Set("Content-Type", contentType)
+	w.WriteHeader(http.StatusOK)
+	w.Write(response)
 }
 
 func hashfile(filename string) {
@@ -35,7 +63,7 @@ func hashfile(filename string) {
 }
 
 func hashanddelete() {
-	dir, err := ioutil.ReadDir(dirName)
+	dir, err := os.ReadDir(dirName)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -62,24 +90,24 @@ func main() {
 	r := mux.NewRouter()
 	r.HandleFunc("/", Hello)
 	r.HandleFunc("/headers", EchoHeaders)
-	r.HandleFunc("/post/json", PostJSON)
-	r.HandleFunc("/post/file/form", PostFormFile)
-	r.HandleFunc("/post/file/{name}", PostFile)
-	r.HandleFunc("/get/json", GetJSON)
-	r.HandleFunc("/get/json/{rows}", GetJSON)
-	r.HandleFunc("/get/image", GetImage)
-	r.HandleFunc("/get/image/{type}", GetImage)
-	r.HandleFunc("/get/image/{type}/{height}", GetImage)
-	r.HandleFunc("/get/image/{type}/{height}/{width}", GetImage)
-	r.HandleFunc("/get/uuid", GetUUID)
-	r.HandleFunc("/get/ipv4", GetIPv4)
-	r.HandleFunc("/get/ipv6", GetIPv6)
-	r.HandleFunc("/get/base64", GetBase64)
-	r.HandleFunc("/get/xml", GetXML)
-	r.HandleFunc("/get/xml/{rows}", GetXML)
-	r.HandleFunc("/cookies/get", GetCookies)
-	r.HandleFunc("/cookies/set/{name}/{value}", SetCookie)
-	r.HandleFunc("/cookies/clear", ClearCookies)
+	r.HandleFunc("/post/json", AllowedMethod(PostJSON, "POST"))
+	r.HandleFunc("/post/file/form", AllowedMethod(PostFormFile, "POST"))
+	r.HandleFunc("/post/file/{name}", AllowedMethod(PostFile, "POST"))
+	r.HandleFunc("/get/json", AllowedMethod(GetJSON, "GET"))
+	r.HandleFunc("/get/json/{rows}", AllowedMethod(GetJSON, "GET"))
+	r.HandleFunc("/get/image", AllowedMethod(GetImage, "GET"))
+	r.HandleFunc("/get/image/{type}", AllowedMethod(GetImage, "GET"))
+	r.HandleFunc("/get/image/{type}/{height}", AllowedMethod(GetImage, "GET"))
+	r.HandleFunc("/get/image/{type}/{height}/{width}", AllowedMethod(GetImage, "GET"))
+	r.HandleFunc("/get/uuid", AllowedMethod(GetUUID, "GET"))
+	r.HandleFunc("/get/ipv4", AllowedMethod(GetIPv4, "GET"))
+	r.HandleFunc("/get/ipv6", AllowedMethod(GetIPv6, "GET"))
+	r.HandleFunc("/get/base64", AllowedMethod(GetBase64, "GET"))
+	r.HandleFunc("/get/xml", AllowedMethod(GetXML, "GET"))
+	r.HandleFunc("/get/xml/{rows}", AllowedMethod(GetXML, "GET"))
+	r.HandleFunc("/cookies/get", AllowedMethod(GetCookies, "GET,POST"))
+	r.HandleFunc("/cookies/set/{name}/{value}", AllowedMethod(SetCookie, "GET,POST"))
+	r.HandleFunc("/cookies/clear", AllowedMethod(ClearCookies, "GET,POST"))
 	r.HandleFunc("/status", StatusCode)
 	r.HandleFunc("/status/{code}", StatusCode)
 	r.HandleFunc("/redirect", Redirect)

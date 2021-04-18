@@ -13,9 +13,9 @@ func TestGetCookies(t *testing.T) {
 			Name:     "testCookie",
 			Value:    "Some Data",
 			HttpOnly: true,
-			// Domain:   cookie_domain,
-			Expires: time.Now(),
-			Secure:  true,
+			Domain:   cookieDomain,
+			Expires:  time.Now(),
+			Secure:   true,
 		},
 	)
 	rr := executeRequest(r, GetCookies)

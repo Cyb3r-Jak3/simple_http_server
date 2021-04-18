@@ -10,8 +10,8 @@ import (
 
 // Hello is a simple hello function
 func Hello(w http.ResponseWriter, _ *http.Request) {
-
-	fmt.Fprintf(w, "hello\n")
+	w.WriteHeader(200)
+	w.Write([]byte("Hello"))
 }
 
 // EchoHeaders returns the headers of the request

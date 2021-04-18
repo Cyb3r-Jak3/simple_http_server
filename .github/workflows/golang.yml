@@ -7,6 +7,8 @@ jobs:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
     runs-on: ${{ matrix.os }}
+    env:
+      GO111MODULE: on
 
     steps:
     - name: Install Go
@@ -38,6 +40,16 @@ jobs:
         mkdir tmp
         go test -coverprofile="c.out"
         go tool cover -func="c.out"
+
+    - name: Run Gosec Security Scanner
+        uses: securego/gosec@master
+        with:
+          args: ./...
+
+    - name: Build
+      run: |
+        go get -d -v ./
+        go build
 
 
     - name: Coverage to deepsource

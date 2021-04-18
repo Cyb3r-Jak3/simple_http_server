@@ -1,9 +1,7 @@
 package main
 
 import (
-	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -13,30 +11,21 @@ import (
 
 // PostJSON echos JSON back that it was sent
 func PostJSON(w http.ResponseWriter, req *http.Request) {
-	if !CheckMethod("POST", req) {
-		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
-		return
-	}
 	req.Body = http.MaxBytesReader(w, req.Body, maxUploadSize*1024*1024)
 	if req.Body == http.NoBody || req.ContentLength == 0 {
 		http.Error(w, "JSON body required", http.StatusBadRequest)
 		return
 	}
-	out, err := ioutil.ReadAll(req.Body)
+	out, err := io.ReadAll(req.Body)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	w.Header().Set("Content-Type", "application/json")
-	w.Write(out)
+	JSONResponse(w, out)
 }
 
 // PostFormFile saves a file that upload as a form-data/multipart request
 func PostFormFile(w http.ResponseWriter, req *http.Request) {
-	if !CheckMethod("POST", req) {
-		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
-		return
-	}
 	req.Body = http.MaxBytesReader(w, req.Body, maxUploadSize*1024*1024)
 	file, handler, err := req.FormFile("file")
 	if err != nil {
@@ -49,14 +38,11 @@ func PostFormFile(w http.ResponseWriter, req *http.Request) {
 	}
 	defer f.Close()
 	io.Copy(f, file)
-	fmt.Fprintln(w, "Done")
+	StringResponse(w, "File uploaded")
 }
 
 //PostFile saves a file that is posted in a request body
 func PostFile(w http.ResponseWriter, req *http.Request) {
-	if !CheckMethod("POST", req) {
-		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
-	}
 	req.Body = http.MaxBytesReader(w, req.Body, maxUploadSize*1024*1024)
 	vars := mux.Vars(req)
 	f, err := os.OpenFile(filepath.Join(dirName, vars["name"]), os.O_WRONLY|os.O_CREATE, 0200)
@@ -65,5 +51,5 @@ func PostFile(w http.ResponseWriter, req *http.Request) {
 	}
 	defer f.Close()
 	io.Copy(f, req.Body)
-	fmt.Fprintln(w, "Done")
+	StringResponse(w, "File uploaded")
 }

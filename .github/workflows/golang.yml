@@ -53,6 +53,12 @@ jobs:
       with:
         sarif_file: results.sarif
 
+    - name: Sarif report
+      uses: actions/upload-artifact@v2
+      with:
+        name: Report
+        path: results.sarif   
+
     - name: Build
       run: |
         go get -d -v .

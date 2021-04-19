@@ -113,6 +113,6 @@ func executeRequest(req *http.Request, responseFunction func(w http.ResponseWrit
 
 func checkResponse(t *testing.T, resp *httptest.ResponseRecorder, expected int) {
 	if expected != resp.Code {
-		t.Errorf("Expected response code %d. Got %d\n. Response body %s\n", expected, resp.Code, resp.Body.String())
+		t.Errorf("Expected response code %d and got %d.\n. Response body: %s\n", expected, resp.Code, resp.Body.String())
 	}
 }

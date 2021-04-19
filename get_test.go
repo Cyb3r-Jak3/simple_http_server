@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/base64"
+	"fmt"
 	"net/http"
 	"regexp"
 	"testing"
@@ -111,12 +112,15 @@ func TestGetBase64(t *testing.T) {
 func TestGETXML(t *testing.T) {
 	Faker = gofakeit.NewCrypto()
 	gofakeit.SetGlobalFaker(Faker)
+	fmt.Println("Use Server rows")
 	r, _ := http.NewRequest("GET", "/get/xml", nil)
 	rr := executeRequest(r, GetXML)
 	checkResponse(t, rr, http.StatusOK)
+	fmt.Println("Sending rows")
 	r, _ = http.NewRequest("GET", "/get/xml/5", nil)
 	rr = executeVarsRequest("/get/xml/{rows}", r, GetXML)
 	checkResponse(t, rr, http.StatusOK)
+	fmt.Printf("String row")
 	r, _ = http.NewRequest("GET", "/get/xml/hello", nil)
 	rr = executeVarsRequest("/get/xml/{rows}", r, GetXML)
 	checkResponse(t, rr, http.StatusBadRequest)

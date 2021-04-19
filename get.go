@@ -183,6 +183,7 @@ func GetBase64(w http.ResponseWriter, req *http.Request) {
 //GetXML generates an XML file for a given number of rows
 func GetXML(w http.ResponseWriter, req *http.Request) {
 	rowCount, err := generaterowcount(req)
+	fmt.Printf("Row count: %d\n. Error: %s\n", rowCount, err)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 	}

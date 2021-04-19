@@ -1,10 +1,12 @@
 package main
 
 import (
+	"crypto/rand"
 	"crypto/sha256"
 	"fmt"
 	"io"
 	"log"
+	"math/big"
 	"net/http"
 	"os"
 	"path"
@@ -31,35 +33,52 @@ func AllowedMethod(handler http.HandlerFunc, methods string) http.HandlerFunc {
 func StringResponse(w http.ResponseWriter, response string) {
 	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
 	w.WriteHeader(http.StatusOK)
-	w.Write([]byte(response))
+	if _, err := w.Write([]byte(response)); err != nil {
+		log.Printf("Error with writing string response: %s\n", err)
+	}
 }
 
 // JSONResponse writes a http response as JSON
 func JSONResponse(w http.ResponseWriter, response []byte) {
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	w.WriteHeader(http.StatusOK)
-	w.Write(response)
+	if _, err := w.Write(response); err != nil {
+		log.Printf("Error with writing JSON response: %s\n", err)
+	}
 }
 
 // ContentResponse writes a http response with a given content type
 func ContentResponse(w http.ResponseWriter, contentType string, response []byte) {
 	w.Header().Set("Content-Type", contentType)
 	w.WriteHeader(http.StatusOK)
-	w.Write(response)
+	if _, err := w.Write(response); err != nil {
+		log.Printf("Error with writing content type '%s' response: %s\n", contentType, err)
+	}
+}
+
+// GenerateRandInt securely generate a random int64
+func GenerateRandInt(x int) (int, error) {
+	nBig, err := rand.Int(rand.Reader, big.NewInt(int64(x)))
+	if err != nil {
+		return 0, err
+	}
+	return int(nBig.Int64()), nil
 }
 
 func hashfile(filename string) {
-	f, err := os.Open(filename)
+	f, err := os.Open(filename) // #nosec
 	if err != nil {
-		log.Printf("Couldn't open %s. Error reason %s", filename, err.Error())
+		log.Printf("Couldn't open %s. Error reason %s\n", filename, err.Error())
 		return
 	}
-	defer f.Close()
 	h := sha256.New()
 	if _, err := io.Copy(h, f); err != nil {
-		log.Printf("Couldn't hash %s. Error reason %s", filename, err.Error())
+		log.Printf("Couldn't hash %s. Error reason %s\n", filename, err.Error())
 	}
 	fmt.Printf("Hash of %s is %x\n", filename, h.Sum(nil))
+	if err := f.Close(); err != nil {
+		log.Printf("Error closing file: %s\n", err)
+	}
 }
 
 func hashanddelete() {
@@ -69,13 +88,17 @@ func hashanddelete() {
 	}
 	for _, d := range dir {
 		hashfile(path.Join([]string{dirName, d.Name()}...))
-		log.Printf("Removing %s", d.Name())
-		os.RemoveAll(path.Join([]string{dirName, d.Name()}...))
+		log.Printf("Removing %s\n", d.Name())
+		if err := os.RemoveAll(path.Join([]string{dirName, d.Name()}...)); err != nil {
+			log.Printf("Error deleting file %s\n", err)
+		}
 	}
 }
 
 func cleardir() {
-	os.Mkdir(dirName, 0200)
+	if err := os.Mkdir(dirName, 0200); err != nil {
+		log.Printf("Error creating directory %s\n", err)
+	}
 
 	for {
 		hashanddelete()

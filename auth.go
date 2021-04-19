@@ -2,6 +2,7 @@ package main
 
 import (
 	"crypto/subtle"
+	"log"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -18,7 +19,9 @@ func DynamicAuth(w http.ResponseWriter, req *http.Request) {
 	if !ok || subtle.ConstantTimeCompare([]byte(user), []byte(vars["username"])) != 1 || subtle.ConstantTimeCompare([]byte(pass), []byte(vars["password"])) != 1 {
 		w.Header().Set("WWW-Authenticate", `Basic realm="Simple HTTP Server"`)
 		w.WriteHeader(401)
-		w.Write([]byte("Unauthorized.\n"))
+		if _, err := w.Write([]byte("Unauthorized.\n")); err != nil {
+			log.Printf("Error writing authorized response: %s\n", err)
+		}
 		return
 	}
 	StringResponse(w, "Authenticated")
@@ -33,7 +36,9 @@ func BasicAuth(handler http.HandlerFunc, username, password string) http.Handler
 		if !ok || subtle.ConstantTimeCompare([]byte(user), []byte(username)) != 1 || subtle.ConstantTimeCompare([]byte(pass), []byte(password)) != 1 {
 			w.Header().Set("WWW-Authenticate", `Basic realm="Simple HTTP Server"`)
 			w.WriteHeader(401)
-			w.Write([]byte("Unauthorized.\n"))
+			if _, err := w.Write([]byte("Unauthorized.\n")); err != nil {
+				log.Printf("Error writing authorized response: %s\n", err)
+			}
 			return
 		}
 

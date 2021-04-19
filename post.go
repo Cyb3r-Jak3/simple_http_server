@@ -2,6 +2,7 @@ package main
 
 import (
 	"io"
+	"log"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -31,14 +32,22 @@ func PostFormFile(w http.ResponseWriter, req *http.Request) {
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 	}
-	defer file.Close()
 	f, err := os.OpenFile(filepath.Join(dirName, handler.Filename), os.O_WRONLY|os.O_CREATE, 0200)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
-	defer f.Close()
-	io.Copy(f, file)
+	if _, err := io.Copy(f, file); err != nil {
+		log.Printf("Error with io.Copy: %s\n", err)
+		http.Error(w, "Error with copying file", http.StatusInternalServerError)
+		return
+	}
 	StringResponse(w, "File uploaded")
+	if err := file.Close(); err != nil {
+		log.Printf("Error closing file: %s\n", err)
+	}
+	if err := f.Close(); err != nil {
+		log.Printf("Error closing f: %s\n", err)
+	}
 }
 
 //PostFile saves a file that is posted in a request body
@@ -48,8 +57,15 @@ func PostFile(w http.ResponseWriter, req *http.Request) {
 	f, err := os.OpenFile(filepath.Join(dirName, vars["name"]), os.O_WRONLY|os.O_CREATE, 0200)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
-	defer f.Close()
-	io.Copy(f, req.Body)
+	if _, err := io.Copy(f, req.Body); err != nil {
+		log.Printf("Error with io.Copy: %s\n", err)
+		http.Error(w, "Error with copying file", http.StatusInternalServerError)
+		return
+	}
 	StringResponse(w, "File uploaded")
+	if err := f.Close(); err != nil {
+		log.Printf("Error closing f: %s\n", err)
+	}
 }

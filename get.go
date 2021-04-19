@@ -6,11 +6,11 @@ import (
 	"fmt"
 	"image/jpeg"
 	"image/png"
-	"io/ioutil"
-	"math/rand"
+	"io"
+	"log"
+
 	"net/http"
 	"strconv"
-	"time"
 
 	"github.com/brianvoe/gofakeit/v6"
 	"github.com/gorilla/mux"
@@ -19,14 +19,14 @@ import (
 func generaterowcount(req *http.Request) (int, error) {
 	vars := mux.Vars(req)
 	var rowCount int
-	var err error
+	var rowErr error
 	if vars["rows"] == "" {
-		rowCount = rand.Intn(defaultRowCount)
+		rowCount, rowErr = GenerateRandInt(defaultRowCount)
 	} else {
-		rowCount, err = strconv.Atoi(vars["rows"])
-		return rowCount, err
+		rowCount, rowErr = strconv.Atoi(vars["rows"])
 	}
-	return rowCount, nil
+	return rowCount, rowErr
+
 }
 
 // GetJSON Return random rows of JSON
@@ -55,15 +55,17 @@ func GetJSON(w http.ResponseWriter, req *http.Request) {
 
 // downloadImage downs an image from the URL and encodes to PNG if needed
 func downloadImage(url string, format string) ([]byte, error) {
-	resp, err := http.Get(url)
+	resp, err := http.Get(url) // #nosec
 	if err != nil {
 		return nil, err
 	}
-	respImage, err := ioutil.ReadAll(resp.Body)
+	respImage, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
 	}
-	resp.Body.Close()
+	if err = resp.Body.Close(); err != nil {
+		log.Printf("Error closing the resp body. %s\n", err)
+	}
 	if format == "png" {
 		//Copied from https://github.com/tizz98/comix/blob/master/app/img.go
 		respImage, err := jpeg.Decode(bytes.NewReader(respImage))
@@ -105,10 +107,8 @@ func GenerateImageURL(vars map[string]string) string {
 	}
 	if vars["width"] == "" {
 		if vars["height"] == "" {
-			s := rand.NewSource(time.Now().Unix())
-			r := rand.New(s)
-			randomIndex := r.Intn(len(sizeOptions))
-			pick := sizeOptions[randomIndex]
+			intChoice, _ := GenerateRandInt(len(sizeOptions))
+			pick := sizeOptions[intChoice]
 			return fmt.Sprint(baseImageURL, fmt.Sprintf("%s/%s.jpg", pick[0], pick[1]))
 		}
 		if isvalidformat(vars["type"]) {
@@ -134,10 +134,9 @@ func GetImage(w http.ResponseWriter, req *http.Request) {
 			"jpg",
 			"url",
 		)
-		s := rand.NewSource(time.Now().Unix())
-		r := rand.New(s)
-
-		imageType = imageTypes[r.Intn(len(imageTypes))]
+		intChoice, err := GenerateRandInt(len(imageTypes))
+		ImageErr = err
+		imageType = imageTypes[intChoice]
 	} else {
 		imageType = vars["type"]
 	}
@@ -158,7 +157,9 @@ func GetImage(w http.ResponseWriter, req *http.Request) {
 	}
 	w.Header().Set("Content-Length", fmt.Sprint(len(Image)))
 	w.WriteHeader(http.StatusOK)
-	w.Write(Image)
+	if _, err := w.Write(Image); err != nil {
+		log.Printf("Error writing image: %s\n", err)
+	}
 }
 
 // GetUUID returns a random UUID as a string

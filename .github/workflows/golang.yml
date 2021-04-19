@@ -4,9 +4,9 @@ on:
   push:
     tags-ignore:
     - '**'
-  paths:
-    - '**.go'
-    - .github/workflows/golang.yml
+    paths:
+      - '**.go'
+      - .github/workflows/golang.yml
 
 jobs:
   test:

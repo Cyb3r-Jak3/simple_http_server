@@ -4,10 +4,10 @@ on:
   push:
     tags-ignore:
     - '**'
-  paths:
-    - '**.go'
-    - Dockerfile
-    - .github/workflows/docker.yml
+    paths:
+      - '**.go'
+      - Dockerfile
+      - .github/workflows/docker.yml
 
 jobs:
   Build:

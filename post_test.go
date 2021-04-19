@@ -13,14 +13,14 @@ func TestPostJSON(t *testing.T) {
 	r, _ := http.NewRequest("POST", "/post/json", bytes.NewBuffer([]byte(`{"hello":"world"}`)))
 	r.Header.Set("Content-Type", "application/json")
 	rr := executeRequest(r, PostJSON)
-	checkResponseCode(t, http.StatusOK, rr.Code)
+	checkResponse(t, rr, http.StatusOK)
 }
 
 func TestPostBadJSON(t *testing.T) {
 	r, _ := http.NewRequest("POST", "/post/json", nil)
 	r.Header.Set("Content-Type", "application/json")
 	rr := executeRequest(r, PostJSON)
-	checkResponseCode(t, http.StatusBadRequest, rr.Code)
+	checkResponse(t, rr, http.StatusBadRequest)
 }
 
 func TestPostFormFile(t *testing.T) {
@@ -35,7 +35,7 @@ func TestPostFormFile(t *testing.T) {
 	r.Header.Add("Content-Type", writer.FormDataContentType())
 	writer.Close()
 	rr := executeRequest(r, PostFormFile)
-	checkResponseCode(t, http.StatusOK, rr.Code)
+	checkResponse(t, rr, http.StatusOK)
 	hashanddelete()
 }
 
@@ -45,5 +45,5 @@ func TestPostFile(t *testing.T) {
 	r, _ := http.NewRequest("POST", "/post/file/main", file)
 	r.Header.Add("Content-Type", "binary/octet-stream")
 	rr := executeVarsRequest("/post/file/{name}", r, PostFile)
-	checkResponseCode(t, http.StatusOK, rr.Code)
+	checkResponse(t, rr, http.StatusOK)
 }

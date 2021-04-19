@@ -21,23 +21,23 @@ func TestHash(t *testing.T) {
 func TestHello(t *testing.T) {
 	r, _ := http.NewRequest("GET", "/", nil)
 	rr := executeRequest(r, Hello)
-	checkResponseCode(t, http.StatusOK, rr.Code)
+	checkResponse(t, rr, http.StatusOK)
 }
 
 func TestHeaders(t *testing.T) {
 	r, _ := http.NewRequest("GET", "/headers", nil)
 	r.Header.Add("hello", "world")
 	rr := executeRequest(r, EchoHeaders)
-	checkResponseCode(t, http.StatusOK, rr.Code)
+	checkResponse(t, rr, http.StatusOK)
 }
 
 func TestAllowedMethod(t *testing.T) {
 	r, _ := http.NewRequest("GET", "/", nil)
 	rr := executeRequest(r, AllowedMethod(Hello, "POST"))
-	checkResponseCode(t, http.StatusMethodNotAllowed, rr.Code)
+	checkResponse(t, rr, http.StatusMethodNotAllowed)
 	r, _ = http.NewRequest("GET", "/", nil)
 	rr = executeRequest(r, AllowedMethod(Hello, "GET,POST"))
-	checkResponseCode(t, http.StatusOK, rr.Code)
+	checkResponse(t, rr, http.StatusOK)
 }
 
 func TestRedirect(t *testing.T) {
@@ -45,13 +45,13 @@ func TestRedirect(t *testing.T) {
 	gofakeit.SetGlobalFaker(Faker)
 	r, _ := http.NewRequest("GET", "/redirect/302", nil)
 	rr := executeVarsRequest("/redirect/{code}", r, Redirect)
-	checkResponseCode(t, http.StatusFound, rr.Code)
+	checkResponse(t, rr, http.StatusFound)
 	r, _ = http.NewRequest("GET", "/redirect/500", nil)
 	rr = executeVarsRequest("/redirect/{code}", r, Redirect)
-	checkResponseCode(t, http.StatusBadRequest, rr.Code)
+	checkResponse(t, rr, http.StatusBadRequest)
 	r, _ = http.NewRequest("GET", "/redirect/hello", nil)
 	rr = executeVarsRequest("/redirect/{code}", r, Redirect)
-	checkResponseCode(t, http.StatusBadRequest, rr.Code)
+	checkResponse(t, rr, http.StatusBadRequest)
 	r, _ = http.NewRequest("GET", "/redirect/", nil)
 	rr = executeRequest(r, Redirect)
 	if !(rr.Code <= 307 && rr.Code >= 300) {
@@ -62,38 +62,38 @@ func TestRedirect(t *testing.T) {
 func TestStatusCodeGood(t *testing.T) {
 	r, _ := http.NewRequest("GET", "/status", nil)
 	rr := executeRequest(r, StatusCode)
-	checkResponseCode(t, http.StatusOK, rr.Code)
+	checkResponse(t, rr, http.StatusOK)
 
 }
 
 func TestStatusCode404(t *testing.T) {
 	r, _ := http.NewRequest("GET", "/status/404", nil)
 	rr := executeVarsRequest("/status/{code}", r, StatusCode)
-	checkResponseCode(t, http.StatusNotFound, rr.Code)
+	checkResponse(t, rr, http.StatusNotFound)
 }
 
 func TestStatusCode500(t *testing.T) {
 	r, _ := http.NewRequest("GET", "/status/500", nil)
 	rr := executeVarsRequest("/status/{code}", r, StatusCode)
-	checkResponseCode(t, http.StatusInternalServerError, rr.Code)
+	checkResponse(t, rr, http.StatusInternalServerError)
 }
 
 func TestStatusCodeFloat(t *testing.T) {
 	r, _ := http.NewRequest("GET", "/status/5.1", nil)
 	rr := executeVarsRequest("/status/{code}", r, StatusCode)
-	checkResponseCode(t, http.StatusBadRequest, rr.Code)
+	checkResponse(t, rr, http.StatusBadRequest)
 }
 
 func TestStatusCodeString(t *testing.T) {
 	r, _ := http.NewRequest("GET", "/status/fail", nil)
 	rr := executeVarsRequest("/status/{code}", r, StatusCode)
-	checkResponseCode(t, http.StatusBadRequest, rr.Code)
+	checkResponse(t, rr, http.StatusBadRequest)
 }
 
 func TestStatusCodeExtra(t *testing.T) {
 	r, _ := http.NewRequest("GET", "/status/700", nil)
 	rr := executeVarsRequest("/status/{code}", r, StatusCode)
-	checkResponseCode(t, 700, rr.Code)
+	checkResponse(t, rr, 700)
 }
 
 func executeVarsRequest(path string, req *http.Request, responseFunction func(w http.ResponseWriter, r *http.Request)) *httptest.ResponseRecorder {
@@ -111,8 +111,8 @@ func executeRequest(req *http.Request, responseFunction func(w http.ResponseWrit
 	return rr
 }
 
-func checkResponseCode(t *testing.T, expected, actual int) {
-	if expected != actual {
-		t.Errorf("Expected response code %d. Got %d\n", expected, actual)
+func checkResponse(t *testing.T, resp *httptest.ResponseRecorder, expected int) {
+	if expected != resp.Code {
+		t.Errorf("Expected response code %d. Got %d\n. Response body %s\n", expected, resp.Code, resp.Body.String())
 	}
 }

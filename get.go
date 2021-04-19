@@ -207,6 +207,7 @@ func GetXML(w http.ResponseWriter, req *http.Request) {
 	ContentResponse(w, "text/xml", randomdata)
 }
 
+// GetCSV generates a CSV file
 func GetCSV(w http.ResponseWriter, req *http.Request) {
 	rowCount, err := generaterowcount(req)
 	if err != nil {

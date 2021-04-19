@@ -2,6 +2,10 @@ name: Test Go
 
 on:
   push:
+    branches:
+      - '**'
+    tags-ignore:
+      - '**'
     paths:
       - '**.go'
       - .github/workflows/golang.yml

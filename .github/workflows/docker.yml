@@ -2,6 +2,10 @@ name: Build Docker
 
 on:
   push:
+    branches:
+      - '**'
+    tags-ignore:
+      - '**'
     paths:
       - '**.go'
       - Dockerfile

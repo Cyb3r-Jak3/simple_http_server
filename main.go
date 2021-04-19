@@ -128,6 +128,8 @@ func main() {
 	r.HandleFunc("/get/base64", AllowedMethod(GetBase64, "GET"))
 	r.HandleFunc("/get/xml", AllowedMethod(GetXML, "GET"))
 	r.HandleFunc("/get/xml/{rows}", AllowedMethod(GetXML, "GET"))
+	r.HandleFunc("/get/csv", AllowedMethod(GetCSV, "GET"))
+	r.HandleFunc("/get/csv/{rows}", AllowedMethod(GetCSV, "GET"))
 	r.HandleFunc("/cookies/get", AllowedMethod(GetCookies, "GET,POST"))
 	r.HandleFunc("/cookies/set/{name}/{value}", AllowedMethod(SetCookie, "GET,POST"))
 	r.HandleFunc("/cookies/clear", AllowedMethod(ClearCookies, "GET,POST"))

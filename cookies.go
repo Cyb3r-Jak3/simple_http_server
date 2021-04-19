@@ -23,9 +23,9 @@ func SetCookie(w http.ResponseWriter, req *http.Request) {
 		Name:     vars["name"],
 		Value:    vars["value"],
 		HttpOnly: true,
-		// Domain:   cookie_domain,
-		Expires: experation,
-		Secure:  true,
+		Domain:   cookieDomain,
+		Expires:  experation,
+		Secure:   true,
 	}
 	http.SetCookie(w, cookie)
 }

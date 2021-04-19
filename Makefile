@@ -1,7 +1,7 @@
 PHONY: coverage lint
 
 coverage:
-	go test -coverprofile="c.out"
+	go test -v -coverprofile="c.out"
 	go tool cover -html="c.out"
 
 lint:
@@ -10,3 +10,6 @@ lint:
 
 dry-release:
 	goreleaser --snapshot --skip-publish --rm-dist
+
+scan:
+	gosec ./...

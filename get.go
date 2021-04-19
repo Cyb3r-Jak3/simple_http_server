@@ -145,11 +145,13 @@ func GetImage(w http.ResponseWriter, req *http.Request) {
 	case "png":
 		Image, ImageErr = downloadImage(imageURL, imageType)
 		w.Header().Set("Content-Type", "image/png")
+		w.Header().Add("Content-Disposition", "attachment;filename=random.png")
 	case "url":
 		w.Header().Set("Content-Type", "text/plain")
 		Image = []byte(imageURL)
 	default:
 		w.Header().Set("Content-Type", "image/jpeg")
+		w.Header().Add("Content-Disposition", "attachment;filename=random.jpg")
 		Image, ImageErr = downloadImage(imageURL, imageType)
 	}
 	if ImageErr != nil {
@@ -201,5 +203,29 @@ func GetXML(w http.ResponseWriter, req *http.Request) {
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
+	w.Header().Add("Content-Disposition", "attachment;filename=random.xml")
+	ContentResponse(w, "text/xml", randomdata)
+}
+
+func GetCSV(w http.ResponseWriter, req *http.Request) {
+	rowCount, err := generaterowcount(req)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+	}
+	randomdata, err := Faker.CSV(&gofakeit.CSVOptions{
+		Delimiter: ",",
+		RowCount:  rowCount,
+		Fields: []gofakeit.Field{
+			{Name: "id", Function: "autoincrement"},
+			{Name: "first_name", Function: "firstname"},
+			{Name: "last_name", Function: "lastname"},
+			{Name: "email", Function: "email"},
+			{Name: "tag", Function: "gamertag"},
+		},
+	})
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+	w.Header().Add("Content-Disposition", "attachment;filename=random.csv")
 	ContentResponse(w, "text/xml", randomdata)
 }

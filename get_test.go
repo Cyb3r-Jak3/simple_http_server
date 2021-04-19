@@ -121,3 +121,17 @@ func TestGETXML(t *testing.T) {
 	rr = executeVarsRequest("/get/xml/{rows}", r, GetXML)
 	checkResponseCode(t, http.StatusBadRequest, rr.Code)
 }
+
+func TestGetCSV(t *testing.T) {
+	Faker = gofakeit.NewCrypto()
+	gofakeit.SetGlobalFaker(Faker)
+	r, _ := http.NewRequest("GET", "/get/csv", nil)
+	rr := executeRequest(r, GetCSV)
+	checkResponseCode(t, http.StatusOK, rr.Code)
+	r, _ = http.NewRequest("GET", "/get/csv/5", nil)
+	rr = executeVarsRequest("/get/csv/{rows}", r, GetCSV)
+	checkResponseCode(t, http.StatusOK, rr.Code)
+	r, _ = http.NewRequest("GET", "/get/csv/hello", nil)
+	rr = executeVarsRequest("/get/csv/{rows}", r, GetCSV)
+	checkResponseCode(t, http.StatusBadRequest, rr.Code)
+}

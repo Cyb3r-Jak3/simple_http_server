@@ -1,6 +1,13 @@
 name: Build Docker
 
-on: [push]
+on:
+  push:
+    tags-ignore:
+    - '**'
+  paths:
+    - **.go
+    - Dockerfile
+    - .github/workflows/docker.yml
 
 jobs:
   Build:

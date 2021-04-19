@@ -1,6 +1,13 @@
 name: Test Go
 
-on: [push]
+on:
+  push:
+    tags-ignore:
+    - '**'
+  paths:
+    - **.go
+    - .github/workflows/golang.yml
+
 jobs:
   test:
     strategy:

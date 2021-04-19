@@ -5,7 +5,7 @@ on:
     tags-ignore:
     - '**'
   paths:
-    - **.go
+    - '**.go'
     - .github/workflows/golang.yml
 
 jobs:

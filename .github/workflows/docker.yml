@@ -5,7 +5,7 @@ on:
     tags-ignore:
     - '**'
   paths:
-    - **.go
+    - '**.go'
     - Dockerfile
     - .github/workflows/docker.yml
 

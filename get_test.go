@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/base64"
+	"encoding/json"
 	"net/http"
 	"regexp"
 	"testing"
@@ -14,6 +15,15 @@ func TestGETJSON(t *testing.T) {
 	gofakeit.SetGlobalFaker(Faker)
 	r, _ := http.NewRequest("GET", "/get/json", nil)
 	rr := executeRequest(r, GetJSON)
+	var jsonObjs interface{}
+	err := json.Unmarshal(rr.Body.Bytes(), &jsonObjs)
+	if err != nil {
+		t.Errorf("Unable to marshal JSON. %s\n", err)
+	}
+	objSlice, _ := jsonObjs.([]interface{})
+	if len(objSlice) != 10 {
+		t.Errorf("Should be 10 JSON objects. Got %d\n", len(objSlice))
+	}
 	checkResponse(t, rr, http.StatusOK)
 	r, _ = http.NewRequest("GET", "/get/json/5", nil)
 	rr = executeVarsRequest("/get/json/{rows}", r, GetJSON)

@@ -14,3 +14,12 @@ const (
 
 // Faker is a global faker variable used by all request types
 var Faker *gofakeit.Faker
+
+// defaultFields are the fakeit fields to use when generating file data
+var defaultFields = []gofakeit.Field{
+	{Name: "id", Function: "autoincrement"},
+	{Name: "first_name", Function: "firstname"},
+	{Name: "last_name", Function: "lastname"},
+	{Name: "email", Function: "email"},
+	{Name: "tag", Function: "gamertag"},
+}

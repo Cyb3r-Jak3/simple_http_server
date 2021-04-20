@@ -21,7 +21,7 @@ func generaterowcount(req *http.Request) (int, error) {
 	var rowCount int
 	var rowErr error
 	if vars["rows"] == "" {
-		rowCount, rowErr = GenerateRandInt(defaultRowCount)
+		rowCount = defaultRowCount
 	} else {
 		rowCount, rowErr = strconv.Atoi(vars["rows"])
 	}
@@ -38,14 +38,8 @@ func GetJSON(w http.ResponseWriter, req *http.Request) {
 	randomdata, err := Faker.JSON(&gofakeit.JSONOptions{
 		Type:     "array",
 		RowCount: rowCount,
-		Fields: []gofakeit.Field{
-			{Name: "id", Function: "autoincrement"},
-			{Name: "first_name", Function: "firstname"},
-			{Name: "last_name", Function: "lastname"},
-			{Name: "email", Function: "email"},
-			{Name: "tag", Function: "gamertag"},
-		},
-		Indent: true,
+		Fields:   defaultFields,
+		Indent:   true,
 	})
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -192,13 +186,7 @@ func GetXML(w http.ResponseWriter, req *http.Request) {
 		RecordElement: "record",
 		RowCount:      rowCount,
 		Indent:        true,
-		Fields: []gofakeit.Field{
-			{Name: "id", Function: "autoincrement"},
-			{Name: "first_name", Function: "firstname"},
-			{Name: "last_name", Function: "lastname"},
-			{Name: "email", Function: "email"},
-			{Name: "tag", Function: "gamertag"},
-		},
+		Fields:        defaultFields,
 	})
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -216,13 +204,7 @@ func GetCSV(w http.ResponseWriter, req *http.Request) {
 	randomdata, err := Faker.CSV(&gofakeit.CSVOptions{
 		Delimiter: ",",
 		RowCount:  rowCount,
-		Fields: []gofakeit.Field{
-			{Name: "id", Function: "autoincrement"},
-			{Name: "first_name", Function: "firstname"},
-			{Name: "last_name", Function: "lastname"},
-			{Name: "email", Function: "email"},
-			{Name: "tag", Function: "gamertag"},
-		},
+		Fields:    defaultFields,
 	})
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)

@@ -3,6 +3,7 @@ package main
 import (
 	"crypto/rand"
 	"crypto/sha256"
+	"errors"
 	"fmt"
 	"io"
 	"log"
@@ -57,12 +58,13 @@ func ContentResponse(w http.ResponseWriter, contentType string, response []byte)
 }
 
 // GenerateRandInt securely generate a random int64
-func GenerateRandInt(x int) (int, error) {
-	nBig, err := rand.Int(rand.Reader, big.NewInt(int64(x)))
-	if err != nil {
-		return 0, err
+func GenerateRandInt(x int) (returnValue int, returnError error) {
+	if x <= 0 {
+		return 0, errors.New("need a row amount of greater than 0")
 	}
-	return int(nBig.Int64()), nil
+	value, returnError := rand.Int(rand.Reader, big.NewInt(int64(x)))
+	returnValue = int(value.Int64())
+	return
 }
 
 func hashfile(filename string) {

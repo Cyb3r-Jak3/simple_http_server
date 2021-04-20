@@ -10,6 +10,16 @@ Releases are signed with my [release key](https://gist.github.com/Cyb3r-Jak3/8a9
 
 To run this program you can download either the docker image or a [release binary](https://github.com/Cyb3r-Jak3/simple_http_server/releases/latest). The port used by the server is 8090.
 
+### Docker
+
+There are images on both Github and Dockerhub.
+
+**Docker:**
+`docker run -d -p 8090:8090 cyb3rjak3/simple_http_server`
+
+**Github:**
+`docker run -d -p 8090:8090 ghcr.io/cyb3r-jak3/simple_http_server`
+
 ## Routes
 
 The routes that are available are:
@@ -52,6 +62,10 @@ Returns a number of JSON rows
 
 Returns a number of XML rows
 
+**Optional**:
+
+    {rows}: Return the number of rows to generate. Default is 10
+
 ### /get/ipv4
 
 Returns an IPv4 address
@@ -63,6 +77,14 @@ Returns an IPv6 address
 ### /get/base64
 
 Returns a paragraph that has been base64 encoded
+
+### /get/csv/{rows}
+
+Returns a csv file
+
+**Optional**:
+
+    {rows}: Return the number of rows to generate. Default is 10
 
 ### /get/image{type}/{height}/{width}
 

@@ -6,6 +6,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 1.1.1 - [UNRELEASED]
+
+### Added
+
+- Release to docker hub
+- GoReleaser Docker Manifest
+- Security code scanning
+- gosec scanning
+- GetCSV function
+
+### Changed
+
+- Matching docker container tags
+- Use crypto/rand for secure number generation
+
 ## 1.1.0 - 2021-04-17
 
 ### Added

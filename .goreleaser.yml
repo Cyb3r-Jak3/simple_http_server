@@ -16,7 +16,8 @@ archives:
       386: i386
       amd64: x86_64
 dockers:
-  - image_templates:
+  - 
+    image_templates:
     - "ghcr.io/cyb3r-jak3/simple_http_server:latest"
     - "ghcr.io/cyb3r-jak3/simple_http_server:{{ .Tag }}"
     - "ghcr.io/cyb3r-jak3/simple_http_server:v{{ .Major }}"
@@ -27,14 +28,15 @@ dockers:
     dockerfile: release.Dockerfile
     use_buildx: true
     build_flag_templates:
-    - "--platform=linux/amd64"
-    - "--label=org.opencontainers.image.created={{.Date}}"
-    - "--label=org.opencontainers.image.title={{.ProjectName}}"
-    - "--label=org.opencontainers.image.revision={{.FullCommit}}"
-    - "--label=org.opencontainers.image.version={{.Version}}"
-    - "--label=org.opencontainers.image.source = "https://github.com/Cyb3r-Jak3/simple_http_server"
+      - "--platform=linux/amd64"
+      - "--label=org.opencontainers.image.created={{ .Date }}"
+      - "--label=org.opencontainers.image.revision={{ .FullCommit }}"
+      - "--label=org.opencontainers.image.version={{ .Version }}"
+      - "--label=org.opencontainers.image.title={{ .ProjectName }}"
+      - "--label=org.opencontainers.image.source=https://github.com/Cyb3r-Jak3/simple_http_server"
 
-  - image_templates:
+  - 
+    image_templates:
     - "cyb3rjak3/simple_http_server:latest-arm64"
     - "cyb3rjak3/simple_http_server:{{ .Tag }}-arm64"
     - "cyb3rjak3/simple_http_server:v{{ .Major }}-arm64"
@@ -45,12 +47,12 @@ dockers:
     dockerfile: release.Dockerfile
     use_buildx: true
     build_flag_templates:
-    - "--platform=linux/arm64"
-    - "--label=org.opencontainers.image.created={{.Date}}"
-    - "--label=org.opencontainers.image.title={{.ProjectName}}"
-    - "--label=org.opencontainers.image.revision={{.FullCommit}}"
-    - "--label=org.opencontainers.image.version={{.Version}}"
-    - "--label=org.opencontainers.image.source = "https://github.com/Cyb3r-Jak3/simple_http_server"
+      - "--platform=linux/arm64"
+      - "--label=org.opencontainers.image.created={{ .Date }}"
+      - "--label=org.opencontainers.image.title={{ .ProjectName }}"
+      - "--label=org.opencontainers.image.revision={{ .FullCommit }}"
+      - "--label=org.opencontainers.image.version={{ .Version }}"
+      - "--label=org.opencontainers.image.source=https://github.com/Cyb3r-Jak3/simple_http_server"
 
 docker_manifests:
 - name_template: ghcr.io/cyb3r-jak3/simple_http_server:{{ .Version }}

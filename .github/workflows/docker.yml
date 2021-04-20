@@ -1,20 +1,26 @@
 name: Build Docker
 
-on: [push]
+on:
+  push:
+    branches:
+      - '**'
+    tags-ignore:
+      - '**'
+    paths:
+      - '**.go'
+      - Dockerfile
+      - .github/workflows/docker.yml
 
 jobs:
   Build:
     runs-on: ubuntu-latest
     steps:
-      - name: Login To GitHub
-        run: echo ${{ secrets.CR_PAT }} | docker login ghcr.io -u $GITHUB_ACTOR --password-stdin
-
       - uses: actions/checkout@v2
+
       - name: Setup ENV
         run: |
           echo "BUILD_DATE=`date -u +"%Y-%m-%dT%H:%M:%SZ"`" >> $GITHUB_ENV
           echo "VCS_REF=`git rev-parse --short HEAD`" >> $GITHUB_ENV
-          echo "BRANCH=${GITHUB_REF##*/}" >> $GITHUB_ENV
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
@@ -38,4 +44,4 @@ jobs:
           push: false
           file: Dockerfile
           tags: |
-            ghcr.io/cyb3r-jak3/example_http_server:latest
+            ghcr.io/cyb3r-jak3/simple_http_server:latest

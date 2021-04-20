@@ -13,13 +13,13 @@ func TestGetCookies(t *testing.T) {
 			Name:     "testCookie",
 			Value:    "Some Data",
 			HttpOnly: true,
-			// Domain:   cookie_domain,
-			Expires: time.Now(),
-			Secure:  true,
+			Domain:   cookieDomain,
+			Expires:  time.Now(),
+			Secure:   true,
 		},
 	)
 	rr := executeRequest(r, GetCookies)
-	checkResponseCode(t, http.StatusOK, rr.Code)
+	checkResponse(t, rr, http.StatusOK)
 }
 
 func TestSetCookies(t *testing.T) {
@@ -28,7 +28,7 @@ func TestSetCookies(t *testing.T) {
 	if len(rr.Result().Cookies()) == 0 {
 		t.Errorf("expected at least one cookie got %d cookies", len(rr.Result().Cookies()))
 	}
-	checkResponseCode(t, http.StatusOK, rr.Code)
+	checkResponse(t, rr, http.StatusOK)
 }
 
 func TestClearCookies(t *testing.T) {
@@ -44,5 +44,5 @@ func TestClearCookies(t *testing.T) {
 		},
 	)
 	rr := executeRequest(r, ClearCookies)
-	checkResponseCode(t, http.StatusOK, rr.Code)
+	checkResponse(t, rr, http.StatusOK)
 }

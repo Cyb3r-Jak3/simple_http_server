@@ -8,30 +8,30 @@ import (
 func TestBadAuth(t *testing.T) {
 	r, _ := http.NewRequest("GET", "/auth/basic/bad", nil)
 	rr := executeRequest(r, BasicAuth(Hello, "user", "user"))
-	checkResponseCode(t, http.StatusUnauthorized, rr.Code)
+	checkResponse(t, rr, http.StatusUnauthorized)
 }
 
 func TestGoodAuth(t *testing.T) {
 	r, _ := http.NewRequest("GET", "/auth/basic/bad", nil)
 	r.SetBasicAuth("admin", "admin")
 	rr := executeRequest(r, BasicAuth(Hello, "admin", "admin"))
-	checkResponseCode(t, http.StatusOK, rr.Code)
+	checkResponse(t, rr, http.StatusOK)
 }
 
 func TestBadDynamicAuth(t *testing.T) {
 	r, _ := http.NewRequest("GET", "/auth/basic/user/password", nil)
 	r.SetBasicAuth("user", "failed")
 	rr := executeVarsRequest("/auth/basic/{user}/{password}", r, DynamicAuth)
-	checkResponseCode(t, http.StatusBadRequest, rr.Code)
+	checkResponse(t, rr, http.StatusBadRequest)
 	r, _ = http.NewRequest("GET", "/auth/basic/user/bad", nil)
 	r.SetBasicAuth("user", "failed")
 	rr = executeVarsRequest("/auth/basic/{username}/{password}", r, DynamicAuth)
-	checkResponseCode(t, http.StatusUnauthorized, rr.Code)
+	checkResponse(t, rr, http.StatusUnauthorized)
 }
 
 func TestGoodDynamicAuth(t *testing.T) {
 	r, _ := http.NewRequest("GET", "/auth/basic/user/allowed", nil)
 	r.SetBasicAuth("user", "allowed")
 	rr := executeVarsRequest("/auth/basic/{username}/{password}", r, DynamicAuth)
-	checkResponseCode(t, http.StatusOK, rr.Code)
+	checkResponse(t, rr, http.StatusOK)
 }

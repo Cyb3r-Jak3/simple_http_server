@@ -2,6 +2,7 @@ package main
 
 import (
 	"io"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
@@ -17,7 +18,7 @@ func PostJSON(w http.ResponseWriter, req *http.Request) {
 		http.Error(w, "JSON body required", http.StatusBadRequest)
 		return
 	}
-	out, err := io.ReadAll(req.Body)
+	out, err := ioutil.ReadAll(req.Body)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return

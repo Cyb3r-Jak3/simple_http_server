@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"log"
 	"math/big"
 	"net/http"
@@ -84,7 +85,7 @@ func hashfile(filename string) {
 }
 
 func hashanddelete() {
-	dir, err := os.ReadDir(dirName)
+	dir, err := ioutil.ReadDir(dirName)
 	if err != nil {
 		log.Fatal(err)
 	}

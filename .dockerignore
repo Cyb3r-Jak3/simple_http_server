@@ -1,0 +1,5 @@
+.git**
+.deepsource.toml
+Makefile
+LICENSE
+**.md

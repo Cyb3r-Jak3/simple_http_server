@@ -1,6 +1,8 @@
 package main
 
 import (
+	"encoding/base64"
+	"encoding/json"
 	"net/http"
 	"regexp"
 	"testing"
@@ -11,18 +13,24 @@ import (
 func TestGETJSON(t *testing.T) {
 	Faker = gofakeit.NewCrypto()
 	gofakeit.SetGlobalFaker(Faker)
-	r, _ := http.NewRequest("POST", "/get/json", nil)
+	r, _ := http.NewRequest("GET", "/get/json", nil)
 	rr := executeRequest(r, GetJSON)
-	checkResponseCode(t, http.StatusMethodNotAllowed, rr.Code)
-	r, _ = http.NewRequest("GET", "/get/json", nil)
-	rr = executeRequest(r, GetJSON)
-	checkResponseCode(t, http.StatusOK, rr.Code)
+	var jsonObjs interface{}
+	err := json.Unmarshal(rr.Body.Bytes(), &jsonObjs)
+	if err != nil {
+		t.Errorf("Unable to marshal JSON. %s\n", err)
+	}
+	objSlice, _ := jsonObjs.([]interface{})
+	if len(objSlice) != 10 {
+		t.Errorf("Should be 10 JSON objects. Got %d\n", len(objSlice))
+	}
+	checkResponse(t, rr, http.StatusOK)
 	r, _ = http.NewRequest("GET", "/get/json/5", nil)
 	rr = executeVarsRequest("/get/json/{rows}", r, GetJSON)
-	checkResponseCode(t, http.StatusOK, rr.Code)
+	checkResponse(t, rr, http.StatusOK)
 	r, _ = http.NewRequest("GET", "/get/json/hello", nil)
 	rr = executeVarsRequest("/get/json/{rows}", r, GetJSON)
-	checkResponseCode(t, http.StatusBadRequest, rr.Code)
+	checkResponse(t, rr, http.StatusBadRequest)
 }
 
 func TestGetImagePNG(t *testing.T) {
@@ -30,28 +38,19 @@ func TestGetImagePNG(t *testing.T) {
 	gofakeit.SetGlobalFaker(Faker)
 	r, _ := http.NewRequest("GET", "/get/image/png", nil)
 	rr := executeVarsRequest("/get/image/{type}", r, GetImage)
-	checkResponseCode(t, http.StatusOK, rr.Code)
+	checkResponse(t, rr, http.StatusOK)
 	r, _ = http.NewRequest("GET", "/get/image", nil)
 	rr = executeRequest(r, GetImage)
-	checkResponseCode(t, http.StatusOK, rr.Code)
+	checkResponse(t, rr, http.StatusOK)
 	r, _ = http.NewRequest("GET", "/get/image/png/200", nil)
 	rr = executeVarsRequest("/get/image/{type}/{height}", r, GetImage)
-	checkResponseCode(t, http.StatusOK, rr.Code)
+	checkResponse(t, rr, http.StatusOK)
 	r, _ = http.NewRequest("GET", "/get/image/png/200/200", nil)
 	rr = executeVarsRequest("/get/image/{type}/{height}/{width}", r, GetImage)
-	checkResponseCode(t, http.StatusOK, rr.Code)
+	checkResponse(t, rr, http.StatusOK)
 	r, _ = http.NewRequest("GET", "/get/image/200/200", nil)
 	rr = executeVarsRequest("/get/image/{type}/{height}", r, GetImage)
-	checkResponseCode(t, http.StatusOK, rr.Code)
-}
-
-func TestBadImage(t *testing.T) {
-	Faker = gofakeit.NewCrypto()
-	gofakeit.SetGlobalFaker(Faker)
-	r, _ := http.NewRequest("POST", "/get/image/png", nil)
-	rr := executeVarsRequest("/get/image/{type}", r, GetImage)
-	checkResponseCode(t, http.StatusMethodNotAllowed, rr.Code)
-
+	checkResponse(t, rr, http.StatusOK)
 }
 
 func TestGetImageJPG(t *testing.T) {
@@ -59,7 +58,7 @@ func TestGetImageJPG(t *testing.T) {
 	gofakeit.SetGlobalFaker(Faker)
 	r, _ := http.NewRequest("GET", "/get/image/jpg", nil)
 	rr := executeVarsRequest("/get/image/{type}", r, GetImage)
-	checkResponseCode(t, http.StatusOK, rr.Code)
+	checkResponse(t, rr, http.StatusOK)
 
 }
 func TestGetImageURL(t *testing.T) {
@@ -67,7 +66,7 @@ func TestGetImageURL(t *testing.T) {
 	gofakeit.SetGlobalFaker(Faker)
 	r, _ := http.NewRequest("GET", "/get/image/url", nil)
 	rr := executeVarsRequest("/get/image/{type}", r, GetImage)
-	checkResponseCode(t, http.StatusOK, rr.Code)
+	checkResponse(t, rr, http.StatusOK)
 }
 
 func TestGetImageFake(t *testing.T) {
@@ -75,7 +74,7 @@ func TestGetImageFake(t *testing.T) {
 	gofakeit.SetGlobalFaker(Faker)
 	r, _ := http.NewRequest("GET", "/get/image/fake", nil)
 	rr := executeVarsRequest("/get/image/{type}", r, GetImage)
-	checkResponseCode(t, http.StatusOK, rr.Code)
+	checkResponse(t, rr, http.StatusOK)
 }
 
 func TestGetUUID(t *testing.T) {
@@ -88,8 +87,61 @@ func TestGetUUID(t *testing.T) {
 	if !reg.MatchString(rr.Body.String()) {
 		t.Error("UUID was not returned")
 	}
-	checkResponseCode(t, http.StatusOK, rr.Code)
-	r, _ = http.NewRequest("POST", "/get/uuid", nil)
-	rr = executeRequest(r, GetUUID)
-	checkResponseCode(t, http.StatusMethodNotAllowed, rr.Code)
+	checkResponse(t, rr, http.StatusOK)
+}
+
+func TestGetIPv4(t *testing.T) {
+	Faker = gofakeit.NewCrypto()
+	gofakeit.SetGlobalFaker(Faker)
+	r, _ := http.NewRequest("GET", "/get/ipv4", nil)
+	rr := executeRequest(r, GetIPv4)
+	checkResponse(t, rr, http.StatusOK)
+}
+
+func TestGetIPv6(t *testing.T) {
+	Faker = gofakeit.NewCrypto()
+	gofakeit.SetGlobalFaker(Faker)
+	r, _ := http.NewRequest("GET", "/get/ipv6", nil)
+	rr := executeRequest(r, GetIPv6)
+	checkResponse(t, rr, http.StatusOK)
+}
+
+func TestGetBase64(t *testing.T) {
+	Faker = gofakeit.NewCrypto()
+	gofakeit.SetGlobalFaker(Faker)
+	r, _ := http.NewRequest("GET", "/get/base64", nil)
+	rr := executeRequest(r, GetBase64)
+	checkResponse(t, rr, http.StatusOK)
+	_, err := base64.URLEncoding.DecodeString(rr.Body.String())
+	if err != nil {
+		t.Errorf("Expected to decode base64 got %s", err.Error())
+	}
+}
+
+func TestGETXML(t *testing.T) {
+	Faker = gofakeit.NewCrypto()
+	gofakeit.SetGlobalFaker(Faker)
+	r, _ := http.NewRequest("GET", "/get/xml", nil)
+	rr := executeRequest(r, GetXML)
+	checkResponse(t, rr, http.StatusOK)
+	r, _ = http.NewRequest("GET", "/get/xml/5", nil)
+	rr = executeVarsRequest("/get/xml/{rows}", r, GetXML)
+	checkResponse(t, rr, http.StatusOK)
+	r, _ = http.NewRequest("GET", "/get/xml/hello", nil)
+	rr = executeVarsRequest("/get/xml/{rows}", r, GetXML)
+	checkResponse(t, rr, http.StatusBadRequest)
+}
+
+func TestGetCSV(t *testing.T) {
+	Faker = gofakeit.NewCrypto()
+	gofakeit.SetGlobalFaker(Faker)
+	r, _ := http.NewRequest("GET", "/get/csv", nil)
+	rr := executeRequest(r, GetCSV)
+	checkResponse(t, rr, http.StatusOK)
+	r, _ = http.NewRequest("GET", "/get/csv/5", nil)
+	rr = executeVarsRequest("/get/csv/{rows}", r, GetCSV)
+	checkResponse(t, rr, http.StatusOK)
+	r, _ = http.NewRequest("GET", "/get/csv/hello", nil)
+	rr = executeVarsRequest("/get/csv/{rows}", r, GetCSV)
+	checkResponse(t, rr, http.StatusBadRequest)
 }

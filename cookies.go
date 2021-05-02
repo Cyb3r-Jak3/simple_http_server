@@ -23,9 +23,9 @@ func SetCookie(w http.ResponseWriter, req *http.Request) {
 		Name:     vars["name"],
 		Value:    vars["value"],
 		HttpOnly: true,
-		// Domain:   cookie_domain,
-		Expires: experation,
-		Secure:  true,
+		Domain:   cookieDomain,
+		Expires:  experation,
+		Secure:   true,
 	}
 	http.SetCookie(w, cookie)
 }
@@ -37,6 +37,5 @@ func ClearCookies(w http.ResponseWriter, req *http.Request) {
 		clearedCookie.MaxAge = -1
 		http.SetCookie(w, clearedCookie)
 	}
-	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
-	fmt.Fprint(w, "All Cookies Should Be Cleared")
+	StringResponse(w, "All Cookies Should Be Cleared")
 }

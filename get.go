@@ -2,71 +2,64 @@ package main
 
 import (
 	"bytes"
+	"encoding/base64"
 	"fmt"
 	"image/jpeg"
 	"image/png"
-	"io"
-	"math/rand"
+	"io/ioutil"
+	"log"
+
 	"net/http"
 	"strconv"
-	"time"
 
 	"github.com/brianvoe/gofakeit/v6"
 	"github.com/gorilla/mux"
 )
 
-// Hello is a simple hello function
-func Hello(w http.ResponseWriter, _ *http.Request) {
+func generaterowcount(req *http.Request) (int, error) {
+	vars := mux.Vars(req)
+	var rowCount int
+	var rowErr error
+	if vars["rows"] == "" {
+		rowCount = defaultRowCount
+	} else {
+		rowCount, rowErr = strconv.Atoi(vars["rows"])
+	}
+	return rowCount, rowErr
 
-	fmt.Fprintf(w, "hello\n")
 }
 
 // GetJSON Return random rows of JSON
 func GetJSON(w http.ResponseWriter, req *http.Request) {
-	if !CheckMethod("GET", req) {
-		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
+	rowCount, err := generaterowcount(req)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
 	}
-	vars := mux.Vars(req)
-	var rowCount int
-	var err error
-	if vars["rows"] == "" {
-		rowCount = rand.Intn(defaultRowCount)
-	} else {
-		rowCount, err = strconv.Atoi(vars["rows"])
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusBadRequest)
-		}
-	}
-	garbage, err := Faker.JSON(&gofakeit.JSONOptions{
+	randomdata, err := Faker.JSON(&gofakeit.JSONOptions{
 		Type:     "array",
 		RowCount: rowCount,
-		Fields: []gofakeit.Field{
-			{Name: "id", Function: "autoincrement"},
-			{Name: "first_name", Function: "firstname"},
-			{Name: "last_name", Function: "lastname"},
-			{Name: "email", Function: "email"},
-			{Name: "tag", Function: "gamertag"},
-		},
-		Indent: true,
+		Fields:   defaultFields,
+		Indent:   true,
 	})
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
-	w.Header().Set("Content-Type", "application/json")
-	fmt.Fprint(w, string(garbage))
+	JSONResponse(w, randomdata)
 }
 
 // downloadImage downs an image from the URL and encodes to PNG if needed
 func downloadImage(url string, format string) ([]byte, error) {
-	resp, err := http.Get(url)
+	resp, err := http.Get(url) // #nosec
 	if err != nil {
 		return nil, err
 	}
-	respImage, err := io.ReadAll(resp.Body)
+	respImage, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
 	}
-	resp.Body.Close()
+	if err = resp.Body.Close(); err != nil {
+		log.Printf("Error closing the resp body. %s\n", err)
+	}
 	if format == "png" {
 		//Copied from https://github.com/tizz98/comix/blob/master/app/img.go
 		respImage, err := jpeg.Decode(bytes.NewReader(respImage))
@@ -108,10 +101,8 @@ func GenerateImageURL(vars map[string]string) string {
 	}
 	if vars["width"] == "" {
 		if vars["height"] == "" {
-			s := rand.NewSource(time.Now().Unix())
-			r := rand.New(s)
-			randomIndex := r.Intn(len(sizeOptions))
-			pick := sizeOptions[randomIndex]
+			intChoice, _ := GenerateRandInt(len(sizeOptions))
+			pick := sizeOptions[intChoice]
 			return fmt.Sprint(baseImageURL, fmt.Sprintf("%s/%s.jpg", pick[0], pick[1]))
 		}
 		if isvalidformat(vars["type"]) {
@@ -126,9 +117,6 @@ func GenerateImageURL(vars map[string]string) string {
 
 // GetImage downloads either a JPG, PNG or URL to an image from picsum.photos
 func GetImage(w http.ResponseWriter, req *http.Request) {
-	if !CheckMethod("GET", req) {
-		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
-	}
 	var Image []byte
 	var ImageErr error
 	var imageType, imageURL string
@@ -140,10 +128,9 @@ func GetImage(w http.ResponseWriter, req *http.Request) {
 			"jpg",
 			"url",
 		)
-		s := rand.NewSource(time.Now().Unix())
-		r := rand.New(s)
-
-		imageType = imageTypes[r.Intn(len(imageTypes))]
+		intChoice, err := GenerateRandInt(len(imageTypes))
+		ImageErr = err
+		imageType = imageTypes[intChoice]
 	} else {
 		imageType = vars["type"]
 	}
@@ -152,25 +139,76 @@ func GetImage(w http.ResponseWriter, req *http.Request) {
 	case "png":
 		Image, ImageErr = downloadImage(imageURL, imageType)
 		w.Header().Set("Content-Type", "image/png")
+		w.Header().Add("Content-Disposition", "attachment;filename=random.png")
 	case "url":
 		w.Header().Set("Content-Type", "text/plain")
 		Image = []byte(imageURL)
 	default:
 		w.Header().Set("Content-Type", "image/jpeg")
+		w.Header().Add("Content-Disposition", "attachment;filename=random.jpg")
 		Image, ImageErr = downloadImage(imageURL, imageType)
 	}
 	if ImageErr != nil {
 		http.Error(w, ImageErr.Error(), http.StatusInternalServerError)
 	}
 	w.Header().Set("Content-Length", fmt.Sprint(len(Image)))
-	w.Write(Image)
+	w.WriteHeader(http.StatusOK)
+	if _, err := w.Write(Image); err != nil {
+		log.Printf("Error writing image: %s\n", err)
+	}
 }
 
 // GetUUID returns a random UUID as a string
-func GetUUID(w http.ResponseWriter, req *http.Request) {
-	if !CheckMethod("GET", req) {
-		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
+func GetUUID(w http.ResponseWriter, req *http.Request) { StringResponse(w, Faker.UUID()) }
+
+// GetIPv4 returns a random IPv4 Address
+func GetIPv4(w http.ResponseWriter, _ *http.Request) { StringResponse(w, Faker.IPv4Address()) }
+
+// GetIPv6 returns a random IPv6 Address
+func GetIPv6(w http.ResponseWriter, _ *http.Request) { StringResponse(w, Faker.IPv6Address()) }
+
+// GetBase64 return random paragraph that is base64 encoded
+func GetBase64(w http.ResponseWriter, req *http.Request) {
+	text := Faker.Paragraph(1, 5, 100, " ")
+	encText := base64.URLEncoding.EncodeToString([]byte(text))
+	StringResponse(w, encText)
+}
+
+//GetXML generates an XML file for a given number of rows
+func GetXML(w http.ResponseWriter, req *http.Request) {
+	rowCount, err := generaterowcount(req)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
 	}
-	w.WriteHeader(200)
-	fmt.Fprint(w, Faker.UUID())
+	randomdata, err := Faker.XML(&gofakeit.XMLOptions{
+		Type:          "array",
+		RootElement:   "xml",
+		RecordElement: "record",
+		RowCount:      rowCount,
+		Indent:        true,
+		Fields:        defaultFields,
+	})
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+	w.Header().Add("Content-Disposition", "attachment;filename=random.xml")
+	ContentResponse(w, "text/xml", randomdata)
+}
+
+// GetCSV generates a CSV file
+func GetCSV(w http.ResponseWriter, req *http.Request) {
+	rowCount, err := generaterowcount(req)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+	}
+	randomdata, err := Faker.CSV(&gofakeit.CSVOptions{
+		Delimiter: ",",
+		RowCount:  rowCount,
+		Fields:    defaultFields,
+	})
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+	w.Header().Add("Content-Disposition", "attachment;filename=random.csv")
+	ContentResponse(w, "text/xml", randomdata)
 }

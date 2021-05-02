@@ -54,16 +54,6 @@ dockers:
       - "--label=org.opencontainers.image.version={{ .Version }}"
       - "--label=org.opencontainers.image.source=https://github.com/Cyb3r-Jak3/simple_http_server"
 
-docker_manifests:
-- name_template: ghcr.io/cyb3r-jak3/simple_http_server:{{ .Version }}
-  image_templates:
-  - ghcr.io/cyb3r-jak3/simple_http_server:{{ .Version }}-amd64
-  - ghcr.io/cyb3r-jak3/simple_http_server:{{ .Version }}-arm64
-- name_template: cyb3r-jak3/simple_http_server:{{ .Version }}
-  image_templates:
-  - cyb3rjak3/simple_http_server:{{ .Version }}-amd64
-  - cyb3rjak3/simple_http_server:{{ .Version }}-arm64
-
 checksum:
   name_template: 'checksums.txt'
 snapshot:

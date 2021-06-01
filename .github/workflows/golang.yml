@@ -4,14 +4,14 @@ on:
   push:
     branches:
       - main
-    pull_request:
-      branches:
-        - main
     tags-ignore:
       - '**'
     paths:
       - '**.go'
       - .github/workflows/golang.yml
+  pull_request:
+    branches:
+      - main
 
 jobs:
   test:

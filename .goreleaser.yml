@@ -8,6 +8,9 @@ builds:
       - linux
       - windows
       - darwin
+    goarch:
+      - amd64
+      - arm64
 archives:
   - replacements:
       darwin: Darwin
@@ -37,17 +40,17 @@ dockers:
 
   - 
     image_templates:
-    - "cyb3rjak3/simple_http_server:latest-arm64"
-    - "cyb3rjak3/simple_http_server:{{ .Tag }}-arm64"
-    - "cyb3rjak3/simple_http_server:v{{ .Major }}-arm64"
-    - "ghcr.io/cyb3r-jak3/simple_http_server:latest-arm64"
-    - "ghcr.io/cyb3r-jak3/simple_http_server:{{ .Tag }}-arm64"
-    - "ghcr.io/cyb3r-jak3/simple_http_server:v{{ .Major }}-arm64"
+    - "cyb3rjak3/simple_http_server:latest-arm64v8"
+    - "cyb3rjak3/simple_http_server:{{ .Tag }}-arm64v8"
+    - "cyb3rjak3/simple_http_server:v{{ .Major }}-arm64v8"
+    - "ghcr.io/cyb3r-jak3/simple_http_server:latest-arm64v8"
+    - "ghcr.io/cyb3r-jak3/simple_http_server:{{ .Tag }}-arm64v8"
+    - "ghcr.io/cyb3r-jak3/simple_http_server:v{{ .Major }}-arm64v8"
     goarch: arm64
     dockerfile: release.Dockerfile
     use_buildx: true
     build_flag_templates:
-      - "--platform=linux/arm64"
+      - "--platform=linux/arm64/v8"
       - "--label=org.opencontainers.image.created={{ .Date }}"
       - "--label=org.opencontainers.image.title={{ .ProjectName }}"
       - "--label=org.opencontainers.image.revision={{ .FullCommit }}"
@@ -58,11 +61,11 @@ docker_manifests:
 - name_template: ghcr.io/cyb3r-jak3/simple_http_server:{{ .Version }}
   image_templates:
   - ghcr.io/cyb3r-jak3/simple_http_server:{{ .Version }}-amd64
-  - ghcr.io/cyb3r-jak3/simple_http_server:{{ .Version }}-arm64
+  - ghcr.io/cyb3r-jak3/simple_http_server:{{ .Version }}-arm64v8
 - name_template: cyb3r-jak3/simple_http_server:{{ .Version }}
   image_templates:
   - cyb3rjak3/simple_http_server:{{ .Version }}-amd64
-  - cyb3rjak3/simple_http_server:{{ .Version }}-arm64
+  - cyb3rjak3/simple_http_server:{{ .Version }}-arm64v8
 
 checksum:
   name_template: 'checksums.txt'

@@ -78,9 +78,8 @@ jobs:
       uses: codecov/codecov-action@v1
       with:
         files: ./coverage.txt
-        verbose: true # optional (default = false)
 
-    - name: Coverage to deepsource
+    - name: Coverage to DeepSource
       if: ${{ runner.os == 'Linux' }}
       run: |
         curl https://deepsource.io/cli | sh

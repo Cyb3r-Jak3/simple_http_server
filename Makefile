@@ -7,7 +7,7 @@ coverage-report: test
 	go tool cover -func="c.out"
 
 test:
-	go test -race -v -coverprofile="c.out"
+	go test -race -covermode=atomic -v -coverprofile="c.out"
 
 lint:
 	go vet .

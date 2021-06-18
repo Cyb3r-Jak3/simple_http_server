@@ -8,7 +8,17 @@ Releases are signed with my [release key](https://gist.github.com/Cyb3r-Jak3/8a9
 
 ## Running
 
-To run this program you can download either the docker image or a [release binary](https://github.com/Cyb3r-Jak3/simple_http_server/releases/latest). The port used by the server is 8090.
+To run this program you can download either the docker image or a [release binary](https://github.com/Cyb3r-Jak3/simple_http_server/releases/latest). 
+
+### Customizing
+
+#### Host
+
+By default the host is `0.0.0.0` and it can be changed with an environment variable of `HOST`
+
+#### Port
+
+By default the port is `8090` and it can be changed with an environment variable of `PORT`
 
 ### Docker
 

@@ -72,6 +72,12 @@ jobs:
     - name: Build
       run: go build -v
 
+    - uses: actions/checkout@master
+    - uses: codecov/codecov-action@v1
+      with:
+        files: ./c.out
+        verbose: true # optional (default = false)
+
     - name: Coverage to deepsource
       if: ${{ runner.os == 'Linux' }}
       run: |

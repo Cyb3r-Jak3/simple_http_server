@@ -8,7 +8,7 @@ Releases are signed with my [release key](https://gist.github.com/Cyb3r-Jak3/8a9
 
 ## Running
 
-To run this program you can download either the docker image or a [release binary](https://github.com/Cyb3r-Jak3/simple_http_server/releases/latest). 
+To run this program you can download either the docker image or a [release binary](https://github.com/Cyb3r-Jak3/simple_http_server/releases/latest).
 
 ### Customizing
 

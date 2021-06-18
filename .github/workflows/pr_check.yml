@@ -25,6 +25,11 @@ jobs:
       with:
         gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
         passphrase: ${{ secrets.PASSPHRASE }}
+
+    - name: Install Go
+      uses: actions/setup-go@v2
+      with:
+        go-version: 1.16
     -
       name: Run GoReleaser
       uses: goreleaser/goreleaser-action@v2.6.1

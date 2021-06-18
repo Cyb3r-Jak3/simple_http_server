@@ -67,15 +67,22 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: Report
-        path: results.sarif   
+        path: |
+          results.sarif
+          coverage.txt
 
     - name: Build
       run: go build -v
 
-    - name: Coverage to deepsource
+    - name: To CodeCov
+      uses: codecov/codecov-action@v1
+      with:
+        files: ./coverage.txt
+
+    - name: Coverage to DeepSource
       if: ${{ runner.os == 'Linux' }}
       run: |
         curl https://deepsource.io/cli | sh
-        ./bin/deepsource report --analyzer test-coverage --key go --value-file ./c.out
+        ./bin/deepsource report --analyzer test-coverage --key go --value-file ./coverage.txt
       env: 
         DEEPSOURCE_DSN: ${{ secrets.DEEPSOURCE_DSN }}

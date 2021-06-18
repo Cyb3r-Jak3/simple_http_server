@@ -15,9 +15,13 @@ import (
 	"strings"
 	"time"
 
+	common "github.com/Cyb3r-Jak3/common/go"
 	"github.com/brianvoe/gofakeit/v6"
 	"github.com/gorilla/mux"
 )
+
+var host string
+var port string
 
 // AllowedMethod is a decorator to get methods
 func AllowedMethod(handler http.HandlerFunc, methods string) http.HandlerFunc {
@@ -109,6 +113,11 @@ func cleardir() {
 	}
 }
 
+func init() {
+	host = common.GetEnv("HOST", "")
+	port = common.GetEnv("PORT", "8090")
+}
+
 func main() {
 	Faker = gofakeit.NewCrypto()
 	gofakeit.SetGlobalFaker(Faker)
@@ -142,8 +151,7 @@ func main() {
 	r.HandleFunc("/redirect/{code}", Redirect)
 	r.HandleFunc("/auth/basic/{username}/{password}", DynamicAuth)
 	r.HandleFunc("/auth/basic/bad", BasicAuth(Hello, "admin", "admin"))
-
-	err := http.ListenAndServe(":8090", r)
+	err := http.ListenAndServe(fmt.Sprintf("%s:%s", host, port), r)
 	if err != nil {
 		log.Fatal(err)
 	}

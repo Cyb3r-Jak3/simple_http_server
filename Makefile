@@ -1,13 +1,13 @@
 PHONY: coverage-html coverage-report lint test dry-release scan
 
 coverage-html: test
-	go tool cover -html="c.out"
+	go tool cover -html="coverage.txt"
 
 coverage-report: test
-	go tool cover -func="c.out"
+	go tool cover -func="coverage.txt"
 
 test:
-	go test -race -v -coverprofile="c.out"
+	go test -race -covermode=atomic -v -coverprofile="coverage.txt"
 
 lint:
 	go vet .

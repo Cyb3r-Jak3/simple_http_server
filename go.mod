@@ -5,4 +5,5 @@ go 1.16
 require (
 	github.com/brianvoe/gofakeit/v6 v6.5.0
 	github.com/gorilla/mux v1.8.0
+	github.com/Cyb3r-Jak3/common v0.0.8
 )

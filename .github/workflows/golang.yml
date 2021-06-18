@@ -3,7 +3,7 @@ name: Test Go
 on:
   push:
     branches:
-      - main
+      - '**'
     tags-ignore:
       - '**'
     paths:
@@ -51,13 +51,12 @@ jobs:
     - name: Test
       run: |
         mkdir tmp
-        go test -v -coverprofile="c.out"
-        go tool cover -func="c.out"
+        make coverage-report
 
     - name: Gosec Security Scanner
       run: |
         go get -u github.com/securego/gosec/v2/cmd/gosec
-        gosec -no-fail -fmt sarif -out results.sarif ./...
+        make scan
 
     - name: Upload SARIF file
       uses: github/codeql-action/upload-sarif@v1
@@ -71,9 +70,7 @@ jobs:
         path: results.sarif   
 
     - name: Build
-      run: |
-        go get -d -v .
-        go build -v
+      run: go build -v
 
     - name: Coverage to deepsource
       if: ${{ runner.os == 'Linux' }}

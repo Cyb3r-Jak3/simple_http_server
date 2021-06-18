@@ -1,8 +1,13 @@
-PHONY: coverage lint
+PHONY: coverage-html coverage-report lint test dry-release scan
 
-coverage:
-	go test -v -coverprofile="c.out"
+coverage-html: test
 	go tool cover -html="c.out"
+
+coverage-report: test
+	go tool cover -func="c.out"
+
+test:
+	go test -race -v -coverprofile="c.out"
 
 lint:
 	go vet .
@@ -12,4 +17,4 @@ dry-release:
 	goreleaser --snapshot --skip-publish --rm-dist
 
 scan:
-	gosec ./...
+	gosec -no-fail -fmt sarif -out results.sarif ./...

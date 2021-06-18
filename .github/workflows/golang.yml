@@ -51,8 +51,7 @@ jobs:
     - name: Test
       run: |
         mkdir tmp
-        go test -v -coverprofile="c.out"
-        go tool cover -func="c.out"
+        make coverage-report
 
     - name: Gosec Security Scanner
       run: |

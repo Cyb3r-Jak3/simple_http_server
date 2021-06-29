@@ -6,11 +6,12 @@ import (
 	"net/http"
 	"strconv"
 
+	common "github.com/Cyb3r-Jak3/common/go"
 	"github.com/gorilla/mux"
 )
 
 // Hello is a simple hello function
-func Hello(w http.ResponseWriter, _ *http.Request) { StringResponse(w, "Hello") }
+func Hello(w http.ResponseWriter, _ *http.Request) { common.StringResponse(w, "Hello") }
 
 // EchoHeaders returns the headers of the request
 func EchoHeaders(w http.ResponseWriter, req *http.Request) {
@@ -26,7 +27,7 @@ func EchoHeaders(w http.ResponseWriter, req *http.Request) {
 func StatusCode(w http.ResponseWriter, req *http.Request) {
 	vars := mux.Vars(req)
 	if vars["code"] == "" {
-		StringResponse(w, "Ok")
+		common.StringResponse(w, "Ok")
 	} else {
 		i, err := strconv.Atoi(vars["code"])
 		if err != nil {

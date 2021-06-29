@@ -18,17 +18,6 @@ func TestHash(t *testing.T) {
 	hashfile("nothere")
 }
 
-func TestRandInt(t *testing.T) {
-	_, err := GenerateRandInt(5)
-	if err != nil {
-		t.Errorf("Wanted to generate a random int. Got error %s\n", err)
-	}
-	_, err = GenerateRandInt(-1)
-	if err == nil {
-		t.Errorf("Wanted error generating int. Didn't get one\n")
-	}
-}
-
 func TestHello(t *testing.T) {
 	r, _ := http.NewRequest("GET", "/", nil)
 	rr := executeRequest(r, Hello)

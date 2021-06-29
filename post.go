@@ -8,6 +8,7 @@ import (
 	"os"
 	"path/filepath"
 
+	common "github.com/Cyb3r-Jak3/common/go"
 	"github.com/gorilla/mux"
 )
 
@@ -23,7 +24,7 @@ func PostJSON(w http.ResponseWriter, req *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	JSONResponse(w, out)
+	common.JSONResponse(w, out)
 }
 
 // PostFormFile saves a file that upload as a form-data/multipart request
@@ -42,7 +43,7 @@ func PostFormFile(w http.ResponseWriter, req *http.Request) {
 		http.Error(w, "Error with copying file", http.StatusInternalServerError)
 		return
 	}
-	StringResponse(w, "File uploaded")
+	common.StringResponse(w, "File uploaded")
 	if err := file.Close(); err != nil {
 		log.Printf("Error closing file: %s\n", err)
 	}
@@ -65,7 +66,7 @@ func PostFile(w http.ResponseWriter, req *http.Request) {
 		http.Error(w, "Error with copying file", http.StatusInternalServerError)
 		return
 	}
-	StringResponse(w, "File uploaded")
+	common.StringResponse(w, "File uploaded")
 	if err := f.Close(); err != nil {
 		log.Printf("Error closing f: %s\n", err)
 	}

@@ -1,14 +1,11 @@
 package main
 
 import (
-	"crypto/rand"
 	"crypto/sha256"
-	"errors"
 	"fmt"
 	"io"
 	"io/ioutil"
 	"log"
-	"math/big"
 	"net/http"
 	"os"
 	"path"
@@ -33,43 +30,6 @@ func AllowedMethod(handler http.HandlerFunc, methods string) http.HandlerFunc {
 		}
 		http.Error(w, "Method not Allowed", http.StatusMethodNotAllowed)
 	}
-}
-
-// StringResponse writes a http response as a string
-func StringResponse(w http.ResponseWriter, response string) {
-	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
-	w.WriteHeader(http.StatusOK)
-	if _, err := w.Write([]byte(response)); err != nil {
-		log.Printf("Error with writing string response: %s\n", err)
-	}
-}
-
-// JSONResponse writes a http response as JSON
-func JSONResponse(w http.ResponseWriter, response []byte) {
-	w.Header().Set("Content-Type", "application/json; charset=utf-8")
-	w.WriteHeader(http.StatusOK)
-	if _, err := w.Write(response); err != nil {
-		log.Printf("Error with writing JSON response: %s\n", err)
-	}
-}
-
-// ContentResponse writes a http response with a given content type
-func ContentResponse(w http.ResponseWriter, contentType string, response []byte) {
-	w.Header().Set("Content-Type", contentType)
-	w.WriteHeader(http.StatusOK)
-	if _, err := w.Write(response); err != nil {
-		log.Printf("Error with writing content type '%s' response: %s\n", contentType, err)
-	}
-}
-
-// GenerateRandInt securely generate a random int64
-func GenerateRandInt(x int) (returnValue int, returnError error) {
-	if x <= 0 {
-		return 0, errors.New("need a row amount of greater than 0")
-	}
-	value, returnError := rand.Int(rand.Reader, big.NewInt(int64(x)))
-	returnValue = int(value.Int64())
-	return
 }
 
 func hashfile(filename string) {

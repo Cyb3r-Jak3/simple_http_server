@@ -12,6 +12,7 @@ import (
 	"net/http"
 	"strconv"
 
+	common "github.com/Cyb3r-Jak3/common/go"
 	"github.com/brianvoe/gofakeit/v6"
 	"github.com/gorilla/mux"
 )
@@ -44,7 +45,7 @@ func GetJSON(w http.ResponseWriter, req *http.Request) {
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
-	JSONResponse(w, randomdata)
+	common.JSONResponse(w, randomdata)
 }
 
 // downloadImage downs an image from the URL and encodes to PNG if needed
@@ -101,7 +102,7 @@ func GenerateImageURL(vars map[string]string) string {
 	}
 	if vars["width"] == "" {
 		if vars["height"] == "" {
-			intChoice, _ := GenerateRandInt(len(sizeOptions))
+			intChoice, _ := common.GenerateRandInt(len(sizeOptions))
 			pick := sizeOptions[intChoice]
 			return fmt.Sprint(baseImageURL, fmt.Sprintf("%s/%s.jpg", pick[0], pick[1]))
 		}
@@ -128,7 +129,7 @@ func GetImage(w http.ResponseWriter, req *http.Request) {
 			"jpg",
 			"url",
 		)
-		intChoice, err := GenerateRandInt(len(imageTypes))
+		intChoice, err := common.GenerateRandInt(len(imageTypes))
 		ImageErr = err
 		imageType = imageTypes[intChoice]
 	} else {
@@ -159,19 +160,19 @@ func GetImage(w http.ResponseWriter, req *http.Request) {
 }
 
 // GetUUID returns a random UUID as a string
-func GetUUID(w http.ResponseWriter, req *http.Request) { StringResponse(w, Faker.UUID()) }
+func GetUUID(w http.ResponseWriter, req *http.Request) { common.StringResponse(w, Faker.UUID()) }
 
 // GetIPv4 returns a random IPv4 Address
-func GetIPv4(w http.ResponseWriter, _ *http.Request) { StringResponse(w, Faker.IPv4Address()) }
+func GetIPv4(w http.ResponseWriter, _ *http.Request) { common.StringResponse(w, Faker.IPv4Address()) }
 
 // GetIPv6 returns a random IPv6 Address
-func GetIPv6(w http.ResponseWriter, _ *http.Request) { StringResponse(w, Faker.IPv6Address()) }
+func GetIPv6(w http.ResponseWriter, _ *http.Request) { common.StringResponse(w, Faker.IPv6Address()) }
 
 // GetBase64 return random paragraph that is base64 encoded
 func GetBase64(w http.ResponseWriter, req *http.Request) {
 	text := Faker.Paragraph(1, 5, 100, " ")
 	encText := base64.URLEncoding.EncodeToString([]byte(text))
-	StringResponse(w, encText)
+	common.StringResponse(w, encText)
 }
 
 //GetXML generates an XML file for a given number of rows
@@ -192,7 +193,7 @@ func GetXML(w http.ResponseWriter, req *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 	w.Header().Add("Content-Disposition", "attachment;filename=random.xml")
-	ContentResponse(w, "text/xml", randomdata)
+	common.ContentResponse(w, "text/xml", randomdata)
 }
 
 // GetCSV generates a CSV file
@@ -210,5 +211,5 @@ func GetCSV(w http.ResponseWriter, req *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 	w.Header().Add("Content-Disposition", "attachment;filename=random.csv")
-	ContentResponse(w, "text/xml", randomdata)
+	common.ContentResponse(w, "text/xml", randomdata)
 }

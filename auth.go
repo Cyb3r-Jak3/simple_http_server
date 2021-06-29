@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 
+	common "github.com/Cyb3r-Jak3/common/go"
 	"github.com/gorilla/mux"
 )
 
@@ -24,7 +25,7 @@ func DynamicAuth(w http.ResponseWriter, req *http.Request) {
 		}
 		return
 	}
-	StringResponse(w, "Authenticated")
+	common.StringResponse(w, "Authenticated")
 }
 
 // BasicAuth handles HTTP basic auth

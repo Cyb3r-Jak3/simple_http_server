@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"time"
 
+	common "github.com/Cyb3r-Jak3/common/go"
 	"github.com/gorilla/mux"
 )
 
@@ -37,5 +38,5 @@ func ClearCookies(w http.ResponseWriter, req *http.Request) {
 		clearedCookie.MaxAge = -1
 		http.SetCookie(w, clearedCookie)
 	}
-	StringResponse(w, "All Cookies Should Be Cleared")
+	common.StringResponse(w, "All Cookies Should Be Cleared")
 }

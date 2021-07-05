@@ -31,15 +31,6 @@ func TestHeaders(t *testing.T) {
 	checkResponse(t, rr, http.StatusOK)
 }
 
-func TestAllowedMethod(t *testing.T) {
-	r, _ := http.NewRequest("GET", "/", nil)
-	rr := executeRequest(r, AllowedMethod(Hello, "POST"))
-	checkResponse(t, rr, http.StatusMethodNotAllowed)
-	r, _ = http.NewRequest("GET", "/", nil)
-	rr = executeRequest(r, AllowedMethod(Hello, "GET,POST"))
-	checkResponse(t, rr, http.StatusOK)
-}
-
 func TestRedirect(t *testing.T) {
 	Faker = gofakeit.NewCrypto()
 	gofakeit.SetGlobalFaker(Faker)

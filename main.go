@@ -9,7 +9,6 @@ import (
 	"net/http"
 	"os"
 	"path"
-	"strings"
 	"time"
 
 	common "github.com/Cyb3r-Jak3/common/go"
@@ -19,18 +18,6 @@ import (
 
 var host string
 var port string
-
-// AllowedMethod is a decorator to get methods
-func AllowedMethod(handler http.HandlerFunc, methods string) http.HandlerFunc {
-	return func(w http.ResponseWriter, req *http.Request) {
-		for _, b := range strings.Split(methods, ",") {
-			if b == req.Method {
-				handler(w, req)
-			}
-		}
-		http.Error(w, "Method not Allowed", http.StatusMethodNotAllowed)
-	}
-}
 
 func hashfile(filename string) {
 	f, err := os.Open(filename) // #nosec
@@ -85,26 +72,26 @@ func main() {
 	r := mux.NewRouter()
 	r.HandleFunc("/", Hello)
 	r.HandleFunc("/headers", EchoHeaders)
-	r.HandleFunc("/post/json", AllowedMethod(PostJSON, "POST"))
-	r.HandleFunc("/post/file/form", AllowedMethod(PostFormFile, "POST"))
-	r.HandleFunc("/post/file/{name}", AllowedMethod(PostFile, "POST"))
-	r.HandleFunc("/get/json", AllowedMethod(GetJSON, "GET"))
-	r.HandleFunc("/get/json/{rows}", AllowedMethod(GetJSON, "GET"))
-	r.HandleFunc("/get/image", AllowedMethod(GetImage, "GET"))
-	r.HandleFunc("/get/image/{type}", AllowedMethod(GetImage, "GET"))
-	r.HandleFunc("/get/image/{type}/{height}", AllowedMethod(GetImage, "GET"))
-	r.HandleFunc("/get/image/{type}/{height}/{width}", AllowedMethod(GetImage, "GET"))
-	r.HandleFunc("/get/uuid", AllowedMethod(GetUUID, "GET"))
-	r.HandleFunc("/get/ipv4", AllowedMethod(GetIPv4, "GET"))
-	r.HandleFunc("/get/ipv6", AllowedMethod(GetIPv6, "GET"))
-	r.HandleFunc("/get/base64", AllowedMethod(GetBase64, "GET"))
-	r.HandleFunc("/get/xml", AllowedMethod(GetXML, "GET"))
-	r.HandleFunc("/get/xml/{rows}", AllowedMethod(GetXML, "GET"))
-	r.HandleFunc("/get/csv", AllowedMethod(GetCSV, "GET"))
-	r.HandleFunc("/get/csv/{rows}", AllowedMethod(GetCSV, "GET"))
-	r.HandleFunc("/cookies/get", AllowedMethod(GetCookies, "GET,POST"))
-	r.HandleFunc("/cookies/set/{name}/{value}", AllowedMethod(SetCookie, "GET,POST"))
-	r.HandleFunc("/cookies/clear", AllowedMethod(ClearCookies, "GET,POST"))
+	r.HandleFunc("/post/json", common.AllowedMethod(PostJSON, "POST"))
+	r.HandleFunc("/post/file/form", common.AllowedMethod(PostFormFile, "POST"))
+	r.HandleFunc("/post/file/{name}", common.AllowedMethod(PostFile, "POST"))
+	r.HandleFunc("/get/json", common.AllowedMethod(GetJSON, "GET"))
+	r.HandleFunc("/get/json/{rows}", common.AllowedMethod(GetJSON, "GET"))
+	r.HandleFunc("/get/image", common.AllowedMethod(GetImage, "GET"))
+	r.HandleFunc("/get/image/{type}", common.AllowedMethod(GetImage, "GET"))
+	r.HandleFunc("/get/image/{type}/{height}", common.AllowedMethod(GetImage, "GET"))
+	r.HandleFunc("/get/image/{type}/{height}/{width}", common.AllowedMethod(GetImage, "GET"))
+	r.HandleFunc("/get/uuid", common.AllowedMethod(GetUUID, "GET"))
+	r.HandleFunc("/get/ipv4", common.AllowedMethod(GetIPv4, "GET"))
+	r.HandleFunc("/get/ipv6", common.AllowedMethod(GetIPv6, "GET"))
+	r.HandleFunc("/get/base64", common.AllowedMethod(GetBase64, "GET"))
+	r.HandleFunc("/get/xml", common.AllowedMethod(GetXML, "GET"))
+	r.HandleFunc("/get/xml/{rows}", common.AllowedMethod(GetXML, "GET"))
+	r.HandleFunc("/get/csv", common.AllowedMethod(GetCSV, "GET"))
+	r.HandleFunc("/get/csv/{rows}", common.AllowedMethod(GetCSV, "GET"))
+	r.HandleFunc("/cookies/get", common.AllowedMethod(GetCookies, "GET,POST"))
+	r.HandleFunc("/cookies/set/{name}/{value}", common.AllowedMethod(SetCookie, "GET,POST"))
+	r.HandleFunc("/cookies/clear", common.AllowedMethod(ClearCookies, "GET,POST"))
 	r.HandleFunc("/status", StatusCode)
 	r.HandleFunc("/status/{code}", StatusCode)
 	r.HandleFunc("/redirect", Redirect)

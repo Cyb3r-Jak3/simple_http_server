@@ -32,7 +32,7 @@ dockers:
     - "cyb3rjak3/simple_http_server:v{{ .Major }}"
     goarch: amd64
     dockerfile: release.Dockerfile
-    use_buildx: true
+    use: buildx
     build_flag_templates:
       - "--platform=linux/amd64"
       - "--label=org.opencontainers.image.created={{ .Date }}"
@@ -51,7 +51,7 @@ dockers:
     - "ghcr.io/cyb3r-jak3/simple_http_server:v{{ .Major }}-arm64v8"
     goarch: arm64
     dockerfile: release.Dockerfile
-    use_buildx: true
+    use: buildx
     build_flag_templates:
       - "--platform=linux/arm64/v8"
       - "--label=org.opencontainers.image.created={{ .Date }}"

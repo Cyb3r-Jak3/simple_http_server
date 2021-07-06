@@ -5,18 +5,8 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/brianvoe/gofakeit/v6"
 	"github.com/gorilla/mux"
 )
-
-func TestCleanDir(t *testing.T) {
-	hashanddelete()
-}
-
-func TestHash(t *testing.T) {
-	hashfile("main.go")
-	hashfile("nothere")
-}
 
 func TestHello(t *testing.T) {
 	r, _ := http.NewRequest("GET", "/", nil)
@@ -29,25 +19,6 @@ func TestHeaders(t *testing.T) {
 	r.Header.Add("hello", "world")
 	rr := executeRequest(r, EchoHeaders)
 	checkResponse(t, rr, http.StatusOK)
-}
-
-func TestRedirect(t *testing.T) {
-	Faker = gofakeit.NewCrypto()
-	gofakeit.SetGlobalFaker(Faker)
-	r, _ := http.NewRequest("GET", "/redirect/302", nil)
-	rr := executeVarsRequest("/redirect/{code}", r, Redirect)
-	checkResponse(t, rr, http.StatusFound)
-	r, _ = http.NewRequest("GET", "/redirect/500", nil)
-	rr = executeVarsRequest("/redirect/{code}", r, Redirect)
-	checkResponse(t, rr, http.StatusBadRequest)
-	r, _ = http.NewRequest("GET", "/redirect/hello", nil)
-	rr = executeVarsRequest("/redirect/{code}", r, Redirect)
-	checkResponse(t, rr, http.StatusBadRequest)
-	r, _ = http.NewRequest("GET", "/redirect/", nil)
-	rr = executeRequest(r, Redirect)
-	if !(rr.Code <= 307 && rr.Code >= 300) {
-		t.Errorf("Expected redirect code between 300 and 307 got %d\n", rr.Code)
-	}
 }
 
 func TestStatusCodeGood(t *testing.T) {
@@ -97,8 +68,8 @@ func executeVarsRequest(path string, req *http.Request, responseFunction func(w 
 
 func executeRequest(req *http.Request, responseFunction func(w http.ResponseWriter, r *http.Request)) *httptest.ResponseRecorder {
 	rr := httptest.NewRecorder()
-	http := http.HandlerFunc(responseFunction)
-	http.ServeHTTP(rr, req)
+	srv := http.HandlerFunc(responseFunction)
+	srv.ServeHTTP(rr, req)
 	return rr
 }
 

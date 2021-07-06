@@ -8,9 +8,12 @@ builds:
       - linux
       - windows
       - darwin
+      - freebsd
+      - openbsd
     goarch:
       - amd64
       - arm64
+      - 386
 archives:
   - replacements:
       darwin: Darwin
@@ -29,7 +32,7 @@ dockers:
     - "cyb3rjak3/simple_http_server:v{{ .Major }}"
     goarch: amd64
     dockerfile: release.Dockerfile
-    use_buildx: true
+    use: buildx
     build_flag_templates:
       - "--platform=linux/amd64"
       - "--label=org.opencontainers.image.created={{ .Date }}"
@@ -48,7 +51,7 @@ dockers:
     - "ghcr.io/cyb3r-jak3/simple_http_server:v{{ .Major }}-arm64v8"
     goarch: arm64
     dockerfile: release.Dockerfile
-    use_buildx: true
+    use: buildx
     build_flag_templates:
       - "--platform=linux/arm64/v8"
       - "--label=org.opencontainers.image.created={{ .Date }}"
@@ -57,15 +60,15 @@ dockers:
       - "--label=org.opencontainers.image.version={{ .Version }}"
       - "--label=org.opencontainers.image.source=https://github.com/Cyb3r-Jak3/simple_http_server"
 
-# docker_manifests:
-# - name_template: ghcr.io/cyb3r-jak3/simple_http_server:{{ .Version }}
-#   image_templates:
-#   - ghcr.io/cyb3r-jak3/simple_http_server:{{ .Version }}-amd64
-#   - ghcr.io/cyb3r-jak3/simple_http_server:{{ .Version }}-arm64v8
-# - name_template: cyb3r-jak3/simple_http_server:{{ .Version }}
-#   image_templates:
-#   - cyb3rjak3/simple_http_server:{{ .Version }}
-#   - cyb3rjak3/simple_http_server:{{ .Version }}-arm64v8
+docker_manifests:
+  - name_template: ghcr.io/cyb3r-jak3/simple_http_server:{{ .Tag }}
+  - image_templates:
+    - ghcr.io/cyb3r-jak3/simple_http_server:{{ .Tag }}-amd64
+    - ghcr.io/cyb3r-jak3/simple_http_server:{{ .Tag }}-arm64v8
+  - name_template: cyb3r-jak3/simple_http_server:{{ .Tag }}
+    image_templates:
+      - cyb3rjak3/simple_http_server:{{ .Tag }}
+      - cyb3rjak3/simple_http_server:{{ .Tag }}-arm64v8
 
 checksum:
   name_template: 'checksums.txt'

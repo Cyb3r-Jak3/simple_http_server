@@ -17,10 +17,8 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func generaterowcount(req *http.Request) (int, error) {
+func generaterowcount(req *http.Request) (rowCount int, rowErr error) {
 	vars := mux.Vars(req)
-	var rowCount int
-	var rowErr error
 	if vars["rows"] == "" {
 		rowCount = defaultRowCount
 	} else {
@@ -35,6 +33,7 @@ func GetJSON(w http.ResponseWriter, req *http.Request) {
 	rowCount, err := generaterowcount(req)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
 	}
 	randomdata, err := Faker.JSON(&gofakeit.JSONOptions{
 		Type:     "array",

@@ -6,14 +6,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 1.3.1 - 2021-07-06
 
-## 1.3.0 - 2020-04-20
+### Added
+
+- Merge of basic auth #15
+
+### Changed
+
+- Fixed docker manifest issue #9
+
+## 1.3.0 - 2021-05-18
 
 ### Added
 
 - Added use of `HOST` and `PORT` environment variables
 
-## 1.1.1 - 2020-04-20
+## 1.1.1 - 2021-04-20
 
 ### Added
 

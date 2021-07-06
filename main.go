@@ -1,9 +1,7 @@
 package main
 
 import (
-	"crypto/sha256"
 	"fmt"
-	"io"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -19,21 +17,6 @@ import (
 var host string
 var port string
 
-func hashfile(filename string) {
-	f, err := os.Open(filename) // #nosec
-	if err != nil {
-		log.Printf("Couldn't open %s. Error reason %s\n", filename, err.Error())
-		return
-	}
-	h := sha256.New()
-	if _, err := io.Copy(h, f); err != nil {
-		log.Printf("Couldn't hash %s. Error reason %s\n", filename, err.Error())
-	}
-	fmt.Printf("Hash of %s is %x\n", filename, h.Sum(nil))
-	if err := f.Close(); err != nil {
-		log.Printf("Error closing file: %s\n", err)
-	}
-}
 
 func hashanddelete() {
 	dir, err := ioutil.ReadDir(dirName)
@@ -41,7 +24,11 @@ func hashanddelete() {
 		log.Fatal(err)
 	}
 	for _, d := range dir {
-		hashfile(path.Join([]string{dirName, d.Name()}...))
+		hashed, err := common.HashFile("256", path.Join([]string{dirName, d.Name()}...))
+		if err != nil {
+			log.Printf("Error when hasing file: %s", err)
+		}
+		fmt.Printf("Hash for %s: %s", d.Name(), hashed)
 		log.Printf("Removing %s\n", d.Name())
 		if err := os.RemoveAll(path.Join([]string{dirName, d.Name()}...)); err != nil {
 			log.Printf("Error deleting file %s\n", err)
@@ -97,7 +84,7 @@ func main() {
 	r.HandleFunc("/redirect", Redirect)
 	r.HandleFunc("/redirect/{code}", Redirect)
 	r.HandleFunc("/auth/basic/{username}/{password}", DynamicAuth)
-	r.HandleFunc("/auth/basic/bad", BasicAuth(Hello, "admin", "admin"))
+	r.HandleFunc("/auth/basic/", DynamicAuth)
 	err := http.ListenAndServe(fmt.Sprintf("%s:%s", host, port), r)
 	if err != nil {
 		log.Fatal(err)

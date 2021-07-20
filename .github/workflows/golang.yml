@@ -85,7 +85,7 @@ jobs:
         files: ./coverage.txt
 
     - name: Coverage to DeepSource
-      if: ${{ runner.os == 'Linux' }}
+      if: ${{ runner.os == 'Linux' && env.DEEPSOURCE_DSN != '' }}
       run: |
         curl https://deepsource.io/cli | sh
         ./bin/deepsource report --analyzer test-coverage --key go --value-file ./coverage.txt

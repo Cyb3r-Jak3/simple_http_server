@@ -80,7 +80,7 @@ jobs:
       run: go build -v
 
     - name: To CodeCov
-      uses: codecov/codecov-action@v2.0.1
+      uses: codecov/codecov-action@v2.0.2
       with:
         files: ./coverage.txt
 

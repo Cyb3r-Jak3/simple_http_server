@@ -12,6 +12,8 @@ on:
 jobs:
   analyze:
     name: Analyze
+    permissions:
+      security-events: write
     runs-on: ubuntu-latest
        
     steps:

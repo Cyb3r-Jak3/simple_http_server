@@ -8,7 +8,8 @@ on:
 
 jobs:
   Lint:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
+    if: ${{ secrets.PASSPHRASE != '' }}
     steps:
     - uses: actions/checkout@v2
 
@@ -21,9 +22,9 @@ jobs:
     -
       name: Import GPG key
       id: import_gpg
-      uses: crazy-max/ghaction-import-gpg@v3.1.0
+      uses: crazy-max/ghaction-import-gpg@v4
       with:
-        gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
+        gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
         passphrase: ${{ secrets.PASSPHRASE }}
 
     - name: Install Go

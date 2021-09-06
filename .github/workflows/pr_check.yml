@@ -22,10 +22,12 @@ jobs:
       name: Import GPG key
       id: import_gpg
       uses: crazy-max/ghaction-import-gpg@v4
-      if: ${{ secrets.PASSPHRASE != '' }}
+      if: ${{ env.PASSPHRASE != '' }}
       with:
         gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
         passphrase: ${{ secrets.PASSPHRASE }}
+      env:
+        PASSPHRASE: ${{ secrets.PASSPHRASE }}
 
     - name: Install Go
       uses: actions/setup-go@v2
@@ -34,7 +36,7 @@ jobs:
     -
       name: Run GoReleaser
       uses: goreleaser/goreleaser-action@v2.7.0
-      if: ${{ secrets.PASSPHRASE != '' }}
+      if: ${{ env.GPG_FINGERPRINT != '' }}
       with:
         version: latest
         args: --snapshot --skip-publish --rm-dist

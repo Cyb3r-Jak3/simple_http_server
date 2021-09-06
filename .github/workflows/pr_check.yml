@@ -9,6 +9,7 @@ on:
 jobs:
   Lint:
     runs-on: ubuntu-20.04
+    if: ${{ secrets.PASSPHRASE != '' }}
     steps:
     - uses: actions/checkout@v2
 
@@ -21,7 +22,7 @@ jobs:
     -
       name: Import GPG key
       id: import_gpg
-      uses: crazy-max/ghaction-import-gpg@v3.1.0
+      uses: crazy-max/ghaction-import-gpg@v3.2.0
       with:
         gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
         passphrase: ${{ secrets.PASSPHRASE }}
@@ -32,7 +33,7 @@ jobs:
         go-version: 1.16
     -
       name: Run GoReleaser
-      uses: goreleaser/goreleaser-action@v2.6.1
+      uses: goreleaser/goreleaser-action@v2.7.0
       with:
         version: latest
         args: --snapshot --skip-publish --rm-dist

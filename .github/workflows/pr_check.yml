@@ -8,8 +8,7 @@ on:
 
 jobs:
   Lint:
-    runs-on: ubuntu-20.04
-    if: ${{ secrets.PASSPHRASE != '' }}
+    runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
 
@@ -22,18 +21,22 @@ jobs:
     -
       name: Import GPG key
       id: import_gpg
-      uses: crazy-max/ghaction-import-gpg@v3.2.0
+      uses: crazy-max/ghaction-import-gpg@v4
+      if: ${{ env.PASSPHRASE != '' }}
       with:
-        gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
+        gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
         passphrase: ${{ secrets.PASSPHRASE }}
+      env:
+        PASSPHRASE: ${{ secrets.PASSPHRASE }}
 
     - name: Install Go
       uses: actions/setup-go@v2
       with:
-        go-version: 1.16
+        go-version: 1.17
     -
       name: Run GoReleaser
       uses: goreleaser/goreleaser-action@v2.7.0
+      if: ${{ env.GPG_FINGERPRINT != '' }}
       with:
         version: latest
         args: --snapshot --skip-publish --rm-dist

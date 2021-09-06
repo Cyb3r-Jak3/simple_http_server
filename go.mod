@@ -1,6 +1,6 @@
 module github.com/Cyb3r-Jak3/simple_http_server/v2
 
-go 1.16
+go 1.17
 
 require (
 	github.com/Cyb3r-Jak3/common v0.1.3

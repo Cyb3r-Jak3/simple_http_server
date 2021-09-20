@@ -4,7 +4,7 @@ go 1.17
 
 require (
 	github.com/Cyb3r-Jak3/common v0.1.4
-	github.com/brianvoe/gofakeit/v6 v6.7.1
+	github.com/brianvoe/gofakeit/v6 v6.8.0
 	github.com/gorilla/mux v1.8.0
 )
 

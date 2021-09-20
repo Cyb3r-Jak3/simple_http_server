@@ -1,7 +1,7 @@
 github.com/Cyb3r-Jak3/common v0.1.4 h1:VREC4av8LNst1MEoZkjwnsQexzPwxx6PQ+pQUvgER6A=
 github.com/Cyb3r-Jak3/common v0.1.4/go.mod h1:gep6T/11diEoMy406OqmPyVUcvpnTKaAO4rXmAsGUe4=
-github.com/brianvoe/gofakeit/v6 v6.7.1 h1:b7qWTFee06udGZL8yw9XQd+gtMD2WRLBPILBt6yVbMM=
-github.com/brianvoe/gofakeit/v6 v6.7.1/go.mod h1:palrJUk4Fyw38zIFB/uBZqsgzW5VsNllhHKKwAebzew=
+github.com/brianvoe/gofakeit/v6 v6.8.0 h1:qAAlgNUqnRc/CU04WwBPspE5cAghce2YHRYihIKv2gI=
+github.com/brianvoe/gofakeit/v6 v6.8.0/go.mod h1:palrJUk4Fyw38zIFB/uBZqsgzW5VsNllhHKKwAebzew=
 github.com/gorilla/mux v1.8.0 h1:i40aqfkR1h2SlN9hojwV5ZA91wcXFOvkdNIeFDP5koI=
 github.com/gorilla/mux v1.8.0/go.mod h1:DVbg23sWSpFRCP0SfiEN6jmj59UnW/n46BH5rLB71So=
 gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405 h1:yhCVgyC4o1eVCa2tZl7eS0r+SDo693bJlVdllGtEeKM=

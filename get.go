@@ -12,7 +12,7 @@ import (
 	"net/http"
 	"strconv"
 
-	common "github.com/Cyb3r-Jak3/common/go"
+	"github.com/Cyb3r-Jak3/common/v2"
 	"github.com/brianvoe/gofakeit/v6"
 	"github.com/gorilla/mux"
 )

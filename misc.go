@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"strconv"
 
-	common "github.com/Cyb3r-Jak3/common/go"
+	"github.com/Cyb3r-Jak3/common/v2"
 	"github.com/gorilla/mux"
 )
 

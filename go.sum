@@ -1,5 +1,5 @@
-github.com/Cyb3r-Jak3/common v0.1.4 h1:VREC4av8LNst1MEoZkjwnsQexzPwxx6PQ+pQUvgER6A=
-github.com/Cyb3r-Jak3/common v0.1.4/go.mod h1:gep6T/11diEoMy406OqmPyVUcvpnTKaAO4rXmAsGUe4=
+github.com/Cyb3r-Jak3/common/v2 v2.0.1 h1:NtWW3gtEHSh0ByGKw+RK/Ix3NTQrTTI5/0c3TAUmjTs=
+github.com/Cyb3r-Jak3/common/v2 v2.0.1/go.mod h1:rQpzpLIxCTC/MDqO2X0207l23naAqq69aSbJVLV8jok=
 github.com/brianvoe/gofakeit/v6 v6.9.0 h1:UCGhPCKLiqBc910TKS7LcOGf74NozftibFCbGIS6GZQ=
 github.com/brianvoe/gofakeit/v6 v6.9.0/go.mod h1:palrJUk4Fyw38zIFB/uBZqsgzW5VsNllhHKKwAebzew=
 github.com/gorilla/mux v1.8.0 h1:i40aqfkR1h2SlN9hojwV5ZA91wcXFOvkdNIeFDP5koI=

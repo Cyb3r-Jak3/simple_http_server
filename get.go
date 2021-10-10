@@ -159,7 +159,7 @@ func GetImage(w http.ResponseWriter, req *http.Request) {
 }
 
 // GetUUID returns a random UUID as a string
-func GetUUID(w http.ResponseWriter, req *http.Request) { common.StringResponse(w, Faker.UUID()) }
+func GetUUID(w http.ResponseWriter, _ *http.Request) { common.StringResponse(w, Faker.UUID()) }
 
 // GetIPv4 returns a random IPv4 Address
 func GetIPv4(w http.ResponseWriter, _ *http.Request) { common.StringResponse(w, Faker.IPv4Address()) }
@@ -168,7 +168,7 @@ func GetIPv4(w http.ResponseWriter, _ *http.Request) { common.StringResponse(w, 
 func GetIPv6(w http.ResponseWriter, _ *http.Request) { common.StringResponse(w, Faker.IPv6Address()) }
 
 // GetBase64 return random paragraph that is base64 encoded
-func GetBase64(w http.ResponseWriter, req *http.Request) {
+func GetBase64(w http.ResponseWriter, _ *http.Request) {
 	text := Faker.Paragraph(1, 5, 100, " ")
 	encText := base64.URLEncoding.EncodeToString([]byte(text))
 	common.StringResponse(w, encText)

@@ -21,7 +21,7 @@ var port string
 func hashanddelete() {
 	dir, err := ioutil.ReadDir(dirName)
 	if err != nil {
-		log.Fatal(err)
+		log.Printf("Error reading directory: %s", err)
 	}
 	for _, d := range dir {
 		hashed, err := common.HashFile("256", path.Join([]string{dirName, d.Name()}...))
